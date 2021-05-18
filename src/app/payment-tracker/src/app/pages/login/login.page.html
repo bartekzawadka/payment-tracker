@@ -1,0 +1,19 @@
+<ion-content [fullscreen]="true">
+  <div id="container">
+    <ion-card class="login-card">
+      <ion-card-header>
+        <ion-card-title>Logowanie</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label>Hasło</ion-label>
+          <ion-input type="password" [(ngModel)]="password"></ion-input>
+        </ion-item>
+        <ion-button class="login-button" (click)="login()" [disabled]="!password">
+          <ion-icon icon="log-in-outline"></ion-icon>
+          <ion-label>Zaloguj</ion-label>
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

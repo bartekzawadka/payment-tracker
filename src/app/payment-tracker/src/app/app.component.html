@@ -1,0 +1,26 @@
+<ion-app>
+  <ion-split-pane contentId="main-content" *ngIf="router.url !== '/login'">
+    <ion-menu contentId="main-content" type="overlay">
+      <ion-content>
+        <ion-list id="inbox-list">
+          <ion-menu-toggle auto-hide="false">
+            <ion-item lines="none" detail="false" routerLinkActive="selected" routerLink="/payment-sets">
+              <ion-icon slot="start" icon="wallet-outline"></ion-icon>
+              <ion-label>Płatności</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+          <ion-menu-toggle auto-hide="false">
+            <ion-item lines="none" detail="false" routerLinkActive="selected" routerLink="/template">
+              <ion-icon slot="start" icon="list-outline"></ion-icon>
+              <ion-label>Szablon</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+      </ion-content>
+    </ion-menu>
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
+  <ion-content *ngIf="router.url === '/login'">
+    <ion-router-outlet></ion-router-outlet>
+  </ion-content>
+</ion-app>

@@ -1,0 +1,65 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Szablon płatności</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="save()" color="primary">
+        <ion-icon icon="save-outline" slot="start"></ion-icon>
+        Zapisz
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Szablon płatności</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="save()" color="primary">
+          <ion-icon icon="save-outline" slot="start"></ion-icon>
+          Zapisz
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <div *ngIf="paymentSetTemplate && paymentSetTemplate.positions && paymentSetTemplate.positions.length > 0">
+    <ion-card *ngFor="let position of paymentSetTemplate.positions">
+      <ion-card-content>
+        <div class="container">
+          <ion-item class="container-item">
+            <ion-input [(ngModel)]="position.name"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label>Faktura?</ion-label>
+            <ion-toggle [(ngModel)]="position.hasInvoice"></ion-toggle>
+          </ion-item>
+          <ion-button shape="round" color="danger">
+            <ion-icon icon="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <ion-card>
+    <ion-card-content>
+      <div class="container">
+        <ion-item class="container-item">
+          <ion-input placeholder="Nazwa..." [(ngModel)]="paymentPosition.name"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Faktura?</ion-label>
+          <ion-toggle [(ngModel)]="paymentPosition.hasInvoice"></ion-toggle>
+        </ion-item>
+        <ion-button shape="round" (click)="addPosition()" [disabled]="!paymentPosition.name">
+          <ion-icon icon="add-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

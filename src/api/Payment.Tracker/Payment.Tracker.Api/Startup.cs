@@ -72,12 +72,15 @@ namespace Payment.Tracker.Api
         {
             services.AddScoped<IGenericRepository<User>, GenericRepository<User>>();
             services.AddScoped<IGenericRepository<PaymentPositionTemplate>, GenericRepository<PaymentPositionTemplate>>();
+            services.AddScoped<IGenericRepository<PaymentSet>, GenericRepository<PaymentSet>>();
+            services.AddScoped<IGenericRepository<PaymentPosition>, GenericRepository<PaymentPosition>>();
         }
 
         private static void RegisterServices(IServiceCollection services)
         {
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ITemplateService, TemplateService>();
+            services.AddScoped<IPaymentsService, PaymentsService>();
         }
         
         private static void RegisterSeeds(IServiceCollection services)

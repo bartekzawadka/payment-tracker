@@ -41,13 +41,6 @@ namespace Payment.Tracker.DataLayer.Repositories
 
         public Task<TEntity> GetByIdWithIncludesAsync(object id, params Expression<Func<TEntity, object>>[] includeNavigations)
         {
-            ParameterExpression parameter = Expression.Parameter(typeof(TEntity), "e");
-            Expression<Func<TEntity, bool>> predicate = Expression.Lambda<Func<TEntity, bool>>(
-                Expression.Equal(
-                    Expression.PropertyOrField(parameter, Consts.IdPropertyName),
-                    Expression.Constant(id)),
-                parameter);
-
             IQueryable<TEntity> query = _dbSet;
 
             if (includeNavigations != null && includeNavigations.Any())
@@ -55,7 +48,7 @@ namespace Payment.Tracker.DataLayer.Repositories
                 query = includeNavigations.Aggregate(query, (current, expression) => current.Include(expression));
             }
 
-            return query.SingleOrDefaultAsync(predicate);
+            return query.SingleOrDefaultAsync(GetIdFilterPredicate<TEntity>(id));
         }
 
         public Task<List<TOut>> GetAsAsync<TOut>(
@@ -76,6 +69,21 @@ namespace Payment.Tracker.DataLayer.Repositories
 
         public Task<TEntity> GetOneAsync(Expression<Func<TEntity, bool>> filter) =>
             _dbSet.SingleOrDefaultAsync(filter);
+
+        public Task<TOut> GetOneAsAsync<TOut>(object id, Expression<Func<TEntity, TOut>> selectExpression) => 
+            GetQueryable(selectExpression).SingleOrDefaultAsync(GetIdFilterPredicate<TOut>(id));
+
+        private static Expression<Func<T, bool>> GetIdFilterPredicate<T>(object id)
+        {
+            ParameterExpression parameter = Expression.Parameter(typeof(T), "e");
+            Expression<Func<T, bool>> predicate = Expression.Lambda<Func<T, bool>>(
+                Expression.Equal(
+                    Expression.PropertyOrField(parameter, Consts.IdPropertyName),
+                    Expression.Constant(id)),
+                parameter);
+
+            return predicate;
+        }
 
         private IQueryable<TEntity> GetQueryable(
             Expression<Func<TEntity, bool>> filter = null,

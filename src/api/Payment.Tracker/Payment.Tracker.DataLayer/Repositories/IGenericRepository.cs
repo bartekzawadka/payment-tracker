@@ -44,6 +44,8 @@ namespace Payment.Tracker.DataLayer.Repositories
 
         Task<TEntity> GetOneAsync(Expression<Func<TEntity, bool>> filter);
 
+        Task<TOut> GetOneAsAsync<TOut>(object id, Expression<Func<TEntity, TOut>> selectExpression);
+
         Task<TEntity> InsertAsync(TEntity entity);
 
         Task InsertManyAsync(IEnumerable<TEntity> entities);
