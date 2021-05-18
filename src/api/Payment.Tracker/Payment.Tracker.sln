@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Tracker.Api", "Paym
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Tracker.DataLayer", "Payment.Tracker.DataLayer\Payment.Tracker.DataLayer.csproj", "{3D64D574-9937-4B64-84EF-373FCCD92155}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Tracker.BusinessLogic", "Payment.Tracker.BusinessLogic\Payment.Tracker.BusinessLogic.csproj", "{C7F8B8F9-9B39-48A1-98C3-6CC4EB5B6AB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{3D64D574-9937-4B64-84EF-373FCCD92155}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D64D574-9937-4B64-84EF-373FCCD92155}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D64D574-9937-4B64-84EF-373FCCD92155}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7F8B8F9-9B39-48A1-98C3-6CC4EB5B6AB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7F8B8F9-9B39-48A1-98C3-6CC4EB5B6AB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7F8B8F9-9B39-48A1-98C3-6CC4EB5B6AB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7F8B8F9-9B39-48A1-98C3-6CC4EB5B6AB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

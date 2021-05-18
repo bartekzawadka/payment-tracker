@@ -13,6 +13,8 @@ namespace Payment.Tracker.DataLayer
 
         public DbSet<PaymentSet> PaymentSets { get; set; }
         
+        public DbSet<PaymentPositionTemplate> PaymentPositionTemplates { get; set; }
+        
         public DbSet<User> Users { get; set; }
 
         public PaymentContext()
@@ -63,6 +65,9 @@ namespace Payment.Tracker.DataLayer
                 builder.Property(user => user.PasswordHash).IsRequired();
                 builder.Property(user => user.PasswordSalt).IsRequired();
             });
+
+            modelBuilder.Entity<PaymentPositionTemplate>(builder =>
+                builder.Property(template => template.Name).IsRequired());
         }
     }
 }
