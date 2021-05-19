@@ -6,6 +6,8 @@ namespace Payment.Tracker.BusinessLogic.Dto.Payment
 
         public bool InvoiceReceived { get; set; }
 
+        public bool HasInvoice { get; set; }
+
         public decimal Price { get; set; }
 
         public bool Paid { get; set; }

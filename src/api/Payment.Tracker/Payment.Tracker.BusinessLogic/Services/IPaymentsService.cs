@@ -11,6 +11,12 @@ namespace Payment.Tracker.BusinessLogic.Services
 
         Task<IServiceActionResult<PaymentSetDto>> GetPaymentSetByIdAsync(int id);
 
-        Task<IServiceActionResult> CreatePaymentSetAsync(PaymentSetDto dto);
+        Task<IServiceActionResult<PaymentSetDto>> GetCurrentSetAsync();
+
+        Task<IServiceActionResult<PaymentSetDto>> CreatePaymentSetAsync(PaymentSetDto dto);
+
+        Task<IServiceActionResult<PaymentSetDto>> UpdatePaymentSetAsync(int id, PaymentSetDto dto);
+
+        Task<IServiceActionResult> DeleteAsync(int id);
     }
 }

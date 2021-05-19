@@ -4,12 +4,12 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Płatności</ion-title>
-<!--    <ion-buttons slot="end">-->
-<!--      <ion-button (click)="save()" color="primary">-->
-<!--        <ion-icon icon="save-outline" slot="start"></ion-icon>-->
-<!--        Zapisz-->
-<!--      </ion-button>-->
-<!--    </ion-buttons>-->
+    <ion-buttons slot="end" *ngIf="!isLoadingError">
+      <ion-button (click)="createNew()" color="primary">
+        <ion-icon icon="add-outline" slot="start"></ion-icon>
+        Utwórz
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -17,15 +17,46 @@
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Płatności</ion-title>
-<!--      <ion-buttons slot="end">-->
-<!--        <ion-button (click)="save()" color="primary">-->
-<!--          <ion-icon icon="save-outline" slot="start"></ion-icon>-->
-<!--          Zapisz-->
-<!--        </ion-button>-->
-<!--      </ion-buttons>-->
+      <ion-buttons slot="end" *ngIf="!isLoadingError" class="ion-margin-end">
+        <ion-button (click)="createNew()" color="primary">
+          <ion-icon icon="add-outline" slot="start"></ion-icon>
+          Utwórz
+        </ion-button>
+      </ion-buttons>
     </ion-toolbar>
   </ion-header>
 
-
+  <div id="container" *ngIf="!isLoadingError && (!payments || payments.length <= 0)">
+    <ion-card-title class="ion-padding-bottom">Nie utworzyłeś jeszcze żadnej płaności</ion-card-title>
+    <ion-button shape="round" (click)="createNew()">
+      <ion-icon icon="add-outline"></ion-icon>
+      Utwórz nową
+    </ion-button>
+  </div>
+  <ion-grid *ngIf="payments && payments.length > 0" class="results-list">
+    <ion-row>
+      <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="12" size-xs="12" *ngFor="let payment of payments">
+        <ion-card>
+          <ion-item>
+            <ion-card-title>{{payment.forMonth | date:'yyyy-MM'}}</ion-card-title>
+            <ion-chip disabled outline color="success" slot="end" *ngIf="payment.invoicesAttached">
+              <ion-icon icon="checkmark-circle"></ion-icon>
+              <ion-label>Faktury wprowadzone</ion-label>
+            </ion-chip>
+          </ion-item>
+            <div class="ion-margin">
+              <ion-button color="danger">
+                <ion-icon icon="trash-outline" slot="start"></ion-icon>
+                Usuń
+              </ion-button>
+              <ion-button class="ion-float-right" [routerLink]="'/payment-set/' + payment.id">
+                <ion-icon icon="create-outline"></ion-icon>
+                Otwórz
+              </ion-button>
+            </div>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
 </ion-content>

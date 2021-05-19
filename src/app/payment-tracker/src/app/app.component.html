@@ -4,6 +4,12 @@
       <ion-content>
         <ion-list id="inbox-list">
           <ion-menu-toggle auto-hide="false">
+            <ion-item lines="none" detail="false" routerLink="/">
+              <ion-icon slot="start" icon="home-outline"></ion-icon>
+              <ion-label>Start</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+          <ion-menu-toggle auto-hide="false">
             <ion-item lines="none" detail="false" routerLinkActive="selected" routerLink="/payment-sets">
               <ion-icon slot="start" icon="wallet-outline"></ion-icon>
               <ion-label>Płatności</ion-label>

@@ -8,7 +8,6 @@ namespace Payment.Tracker.BusinessLogic.Validators.Payment
         public PaymentPositionDtoValidator()
         {
             RuleFor(dto => dto.Name).NotEmpty().WithMessage("Nazwa pozycji jest wymagana");
-            RuleFor(dto => dto.Price).GreaterThan(0).WithMessage("Kwota pozycji jest wymagana");
         }
     }
 }

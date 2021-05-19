@@ -25,8 +25,19 @@ namespace Payment.Tracker.Api.Controllers
         public Task<IServiceActionResult<PaymentSetDto>> GetByIdAsync(int id) =>
             _paymentsService.GetPaymentSetByIdAsync(id);
 
+        [HttpGet("current")]
+        public Task<IServiceActionResult<PaymentSetDto>> GetCurrentSetAsync() =>
+            _paymentsService.GetCurrentSetAsync();
+
         [HttpPost]
-        public Task<IServiceActionResult> PostAsync([FromBody] PaymentSetDto dto) =>
+        public Task<IServiceActionResult<PaymentSetDto>> PostAsync([FromBody] PaymentSetDto dto) =>
             _paymentsService.CreatePaymentSetAsync(dto);
+
+        [HttpPut("{id:int}")]
+        public Task<IServiceActionResult<PaymentSetDto>> PutAsync(int id, [FromBody] PaymentSetDto dto) =>
+            _paymentsService.UpdatePaymentSetAsync(id, dto);
+
+        [HttpDelete("{id:int}")]
+        public Task<IServiceActionResult> DeleteAsync(int id) => _paymentsService.DeleteAsync(id);
     }
 }

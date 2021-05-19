@@ -8,10 +8,6 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'folder/:id',
-    loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
-  },
-  {
     path: 'template',
     loadChildren: () => import('./pages/template/template.module').then( m => m.TemplatePageModule)
   },
@@ -21,6 +17,14 @@ const routes: Routes = [
   },
   {
     path: 'payment-set',
+    loadChildren: () => import('./pages/payment-set/payment-set.module').then( m => m.PaymentSetPageModule)
+  },
+  {
+    path: 'payment-set/:id',
+    loadChildren: () => import('./pages/payment-set/payment-set.module').then( m => m.PaymentSetPageModule)
+  },
+  {
+    path: 'payment-set/current',
     loadChildren: () => import('./pages/payment-set/payment-set.module').then( m => m.PaymentSetPageModule)
   },
   {
