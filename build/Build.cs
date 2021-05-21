@@ -73,15 +73,14 @@ class Build : NukeBuild
 
     Target Compile => _ => _
         .DependsOn(Restore)
-        .Executes(async () =>
+        .Executes(() =>
         {
-            var args = "build";
+            var command = "run ng run app:build";
             if (Equals(Configuration, Configuration.Release))
             {
-                args += " --prod";
-            }
                 
-            await RunIonicAsync(args);
+            }
+            NpmTasks.Npm("run ng run app:build:production", AppDirectory);
 
             DotNetTasks.DotNetBuild(settings =>
                 settings
@@ -97,8 +96,13 @@ class Build : NukeBuild
             AbsolutePath srcDir = AppDirectory / "www";
             AbsolutePath destDir = PublishDirectory / "app";
             
-            CopyDirectoryRecursively(srcDir, destDir);
+            if (Directory.Exists(destDir))
+            {
+                DeleteDirectory(destDir);
+            }
             
+            CopyDirectoryRecursively(srcDir, destDir);
+
             DotNetTasks.DotNetPublish(settings =>
                 settings
                     .SetConfiguration(Configuration)
@@ -108,20 +112,4 @@ class Build : NukeBuild
                     .SetProject(Solution.GetProject("Payment.Tracker.Api"))
                     .SetOutput(PublishDirectory / "api"));
         });
-
-    async Task RunIonicAsync(string command)
-    {
-        Process proc = new Process
-        {
-            StartInfo = new ProcessStartInfo
-            {
-                WorkingDirectory = AppDirectory,
-                FileName = "ionic",
-                Arguments = command
-            }
-        };
-
-        proc.Start();
-        await proc.WaitForExitAsync();
-    }
 }
