@@ -7,6 +7,10 @@ resources:
     source: Build
     trigger: true
 
+parameters:
+  - name: imageName
+    type: string
+
 jobs:
     - job: DockerPublishj
       displayName: 'Publish docker images'
@@ -18,13 +22,19 @@ jobs:
         name: Azure Pipelines
         vmImage: ubuntu-20.04
       steps:
-        - task: DownloadPipelineArtifact@2
-          displayName: 'Download artifacts'
-          inputs:
-            source: specific
-            project: 'Payment Tracker'
-            pipeline: build
-        - task: ExtractFiles@1
-          displayName: 'Extract artifacts'
-          inputs:
-            archiveFilePatterns: '$(System.ArtifactsDirectory)/**/*.zip'
+          - task: Docker@2
+            displayName: Build API image
+            inputs:
+              repository: $(imageName)
+              command: build
+              Dockerfile: $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Api/Dockerfile
+        # - task: DownloadPipelineArtifact@2
+        #   displayName: 'Download artifacts'
+        #   inputs:
+        #     source: specific
+        #     project: 'Payment Tracker'
+        #     pipeline: build
+        # - task: ExtractFiles@1
+        #   displayName: 'Extract artifacts'
+        #   inputs:
+        #     archiveFilePatterns: '$(System.ArtifactsDirectory)/**/*.zip'

@@ -37,22 +37,22 @@ jobs:
       - script: './build.sh --target publish --configuration $(BuildConfiguration) --host AzurePipelines'
         displayName: 'Run NUKE build'
 
-      - task: ArchiveFiles@2
-        displayName: 'Archive API files'
-        inputs:
-            rootFolderOrFile: publish/api
-            includeRootFolder: false
-            archiveFile: '$(Build.ArtifactStagingDirectory)/Payment.Tracker.Api.zip'
+      # - task: ArchiveFiles@2
+      #   displayName: 'Archive API files'
+      #   inputs:
+      #       rootFolderOrFile: publish/api
+      #       includeRootFolder: false
+      #       archiveFile: '$(Build.ArtifactStagingDirectory)/Payment.Tracker.Api.zip'
 
-      - task: ArchiveFiles@2
-        displayName: 'Archive APP files'
-        inputs:
-            rootFolderOrFile: publish/app
-            includeRootFolder: false
-            archiveFile: '$(Build.ArtifactStagingDirectory)/Payment.Tracker.App.zip'
+      # - task: ArchiveFiles@2
+      #   displayName: 'Archive APP files'
+      #   inputs:
+      #       rootFolderOrFile: publish/app
+      #       includeRootFolder: false
+      #       archiveFile: '$(Build.ArtifactStagingDirectory)/Payment.Tracker.App.zip'
 
-      - task: PublishBuildArtifacts@1
-        displayName: 'Publish Artifacts'
-        inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-          ArtifactName: Payment.Tracker
+      # - task: PublishBuildArtifacts@1
+      #   displayName: 'Publish Artifacts'
+      #   inputs:
+      #     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      #     ArtifactName: Payment.Tracker
