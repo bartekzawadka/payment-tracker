@@ -1,3 +1,6 @@
+trigger: none
+name: 'Publish docker images'
+
 resources:
   pipelines:
   - pipeline: build
@@ -24,4 +27,4 @@ jobs:
         - task: ExtractFiles@1
           displayName: 'Extract artifacts'
           inputs:
-            archiveFilePatterns: '**/*.zip'
+            archiveFilePatterns: '$(System.ArtifactsDirectory)/**/*.zip'
