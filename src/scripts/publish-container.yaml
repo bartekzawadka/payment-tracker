@@ -7,10 +7,6 @@ resources:
     source: Build
     trigger: true
 
-variables:
-  - name: imageName
-    value: $(imageName)
-
 jobs:
     - job: DockerPublishj
       displayName: 'Publish docker images'
