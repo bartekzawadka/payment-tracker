@@ -29,8 +29,9 @@ class Build : NukeBuild
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
-    
-    [Solution] readonly Solution Solution;
+
+    [Solution("src/api/Payment.Tracker/Payment.Tracker.sln")]
+    readonly Solution Solution;
     readonly AbsolutePath SourceDirectory = RootDirectory / "src";
     readonly AbsolutePath AppDirectory = RootDirectory / "src" / "app" / "payment-tracker";
     readonly AbsolutePath PublishDirectory = RootDirectory / "publish";
