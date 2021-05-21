@@ -32,7 +32,7 @@ jobs:
           packageType: 'sdk'
           version: '5.0.x'           
 
-      - script: 'sudo ./build.sh --target publish --configuration $(BuildConfiguration)'
+      - script: './build.sh --target publish --configuration $(BuildConfiguration) --host AzurePipelines'
         displayName: 'Run NUKE build'
 
       - task: ArchiveFiles@2
