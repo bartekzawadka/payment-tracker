@@ -25,7 +25,12 @@ jobs:
             targetFiles: '**/environment.prod.ts'
             writeBOM: false
             tokenPrefix: '##{'
-            tokenSuffix: '}##'            
+            tokenSuffix: '}##'
+
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'sdk'
+          version: '5.0.x'           
 
       - script: 'sudo ./build.sh --target publish --configuration $(BuildConfiguration)'
         displayName: 'Run NUKE build'
