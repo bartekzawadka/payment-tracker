@@ -40,34 +40,29 @@ jobs:
       - task: Docker@2
         displayName: Build API image
         inputs:
-          repository: $(imageName)
+          repository: $(apiImageName)
           command: build
           buildContext: $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Api/bin/$(BuildConfiguration)/net5.0
           Dockerfile: $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Api/Dockerfile
 
       - task: Docker@2
+        displayName: Build APP image
+        inputs:
+          repository: $(appImageName)
+          command: build
+          buildContext: $(Build.SourcesDirectory)/src/app/payment-tracker
+          Dockerfile: $(Build.SourcesDirectory)/src/app/payment-tracker/Dockerfile
+
+      - task: Docker@2
         displayName: Publish API image
         inputs:
           containerRegistry: 'dockerhub-payment-tracker-api'
-          repository: $(imageName)
-          command: push        
+          repository: $(apiImageName)
+          command: push
 
-      # - task: ArchiveFiles@2
-      #   displayName: 'Archive API files'
-      #   inputs:
-      #       rootFolderOrFile: publish/api
-      #       includeRootFolder: false
-      #       archiveFile: '$(Build.ArtifactStagingDirectory)/Payment.Tracker.Api.zip'
-
-      # - task: ArchiveFiles@2
-      #   displayName: 'Archive APP files'
-      #   inputs:
-      #       rootFolderOrFile: publish/app
-      #       includeRootFolder: false
-      #       archiveFile: '$(Build.ArtifactStagingDirectory)/Payment.Tracker.App.zip'
-
-      # - task: PublishBuildArtifacts@1
-      #   displayName: 'Publish Artifacts'
-      #   inputs:
-      #     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      #     ArtifactName: Payment.Tracker
+      - task: Docker@2
+        displayName: Publish APP image
+        inputs:
+          containerRegistry: 'dockerhub-payment-tracker-api'
+          repository: $(appImageName)
+          command: push
