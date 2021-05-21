@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -52,12 +53,20 @@ namespace Payment.Tracker.Api
             
             IConfigurationSection securityConfigSection = Configuration.GetSection(nameof(SecuritySettings));
             var securitySettings = securityConfigSection.Get<SecuritySettings>();
+            ApplyEnvironmentVariables(securitySettings);
+
             services.AddSingleton<ISecuritySettings>(securitySettings);
             ConfigureAuth(services, securitySettings);
             
             services.AddControllers(options => { options.Filters.Add<ServiceActionFilter>(); });
 
             string connectionString = Configuration.GetConnectionString(Consts.DatabaseName);
+            var connectionStringVar = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+            if (!string.IsNullOrWhiteSpace(connectionStringVar))
+            {
+                connectionString = connectionStringVar;
+            }
+            
             services.AddDbContext<PaymentContext>((_, builder) =>
             {
                 builder.UseMySql(connectionString, new MySqlServerVersion(Consts.DbServerVersion));
@@ -66,6 +75,27 @@ namespace Payment.Tracker.Api
             RegisterRepositories(services);
             RegisterServices(services);
             RegisterSeeds(services);
+        }
+
+        private static void ApplyEnvironmentVariables(SecuritySettings securitySettings)
+        {
+            var tokenSecretVar = Environment.GetEnvironmentVariable("TOKEN_SECRET");
+            if (!string.IsNullOrWhiteSpace(tokenSecretVar))
+            {
+                securitySettings.TokenSecret = tokenSecretVar;
+            }
+
+            var appHost = Environment.GetEnvironmentVariable("APP_HOST");
+            if (!string.IsNullOrWhiteSpace(appHost))
+            {
+                securitySettings.AllowedHost = appHost;
+            }
+
+            var adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
+            if (!string.IsNullOrWhiteSpace(adminPassword))
+            {
+                securitySettings.AdminPassword = adminPassword;
+            }
         }
         
         private static void RegisterRepositories(IServiceCollection services)

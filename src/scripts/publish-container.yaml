@@ -7,7 +7,7 @@ resources:
     source: Build
     trigger: true
 
-parameters:
+variables:
   - name: imageName
     type: string
 
@@ -28,6 +28,12 @@ jobs:
               repository: $(imageName)
               command: build
               Dockerfile: $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Api/Dockerfile
+
+          - task: Docker@2
+            displayName: Publish API image
+            inputs:
+              repository: $(imageName)
+              command: push
         # - task: DownloadPipelineArtifact@2
         #   displayName: 'Download artifacts'
         #   inputs:
