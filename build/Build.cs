@@ -43,7 +43,8 @@ class Build : NukeBuild
             var nodeModulesPath = AppDirectory / "node_modules";
             if (Directory.Exists(nodeModulesPath))
             {
-                Directory.Delete(nodeModulesPath, true);
+                DeleteDirectory(nodeModulesPath);
+                //Directory.Delete(nodeModulesPath);
             }
 
             var distPath = AppDirectory / "www";

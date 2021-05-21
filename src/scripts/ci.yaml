@@ -27,7 +27,7 @@ jobs:
             tokenPrefix: '##{'
             tokenSuffix: '}##'            
 
-      - script: './build.cmd --target clean compile publish --configuration $(BuildConfiguration)'
+      - script: 'sudo ./build.sh --target publish --configuration $(BuildConfiguration)'
         displayName: 'Run NUKE build'
 
       - task: ArchiveFiles@2
