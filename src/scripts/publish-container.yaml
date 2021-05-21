@@ -16,7 +16,12 @@ jobs:
         vmImage: ubuntu-20.04
       steps:
         - task: DownloadPipelineArtifact@2
+          displayName: 'Download artifacts'
           inputs:
             source: specific
             project: 'Payment Tracker'
             pipeline: build
+        - task: ExtractFiles@1
+          displayName: 'Extract artifacts'
+          inputs:
+            archiveFilePatterns: '**/*.zip'
