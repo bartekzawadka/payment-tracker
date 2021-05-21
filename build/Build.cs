@@ -78,9 +78,9 @@ class Build : NukeBuild
             var command = "run ng run app:build";
             if (Equals(Configuration, Configuration.Release))
             {
-                
+                command += ":production";
             }
-            NpmTasks.Npm("run ng run app:build:production", AppDirectory);
+            NpmTasks.Npm(command, AppDirectory);
 
             DotNetTasks.DotNetBuild(settings =>
                 settings
