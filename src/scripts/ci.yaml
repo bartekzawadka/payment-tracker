@@ -1,0 +1,51 @@
+jobs:
+    - job: Build
+      displayName: 'Build'
+      variables:
+        BuildConfiguration: Release
+      workspace: 
+        clean: all
+      pool:
+        name: Azure Pipelines
+        vmImage: ubuntu-20.04
+      steps:
+      - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+        displayName: 'Replace tokens in **/appsettings.Production.config'
+        inputs:
+            rootDirectory: src
+            targetFiles: '**/appsettings.Production.json'
+            writeBOM: false
+            tokenPrefix: '##{'
+            tokenSuffix: '}##'
+
+      - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+        displayName: 'Replace tokens in **/appsettings.Production.config'
+        inputs:
+            rootDirectory: src
+            targetFiles: '**/environment.prod.ts'
+            writeBOM: false
+            tokenPrefix: '##{'
+            tokenSuffix: '}##'            
+
+      - script: './build.sh --target clean compile publish --configuration $(BuildConfiguration)'
+        displayName: 'Run NUKE build'
+
+      - task: ArchiveFiles@2
+        displayName: 'Archive API files'
+        inputs:
+            rootFolderOrFile: publish/api
+            includeRootFolder: false
+            archiveFile: '$(Build.ArtifactStagingDirectory)/Payment.Tracker.Api.zip'
+
+      - task: ArchiveFiles@2
+        displayName: 'Archive APP files'
+        inputs:
+            rootFolderOrFile: publish/app
+            includeRootFolder: false
+            archiveFile: '$(Build.ArtifactStagingDirectory)/Payment.Tracker.App.zip'
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifacts'
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: Payment.Tracker
