@@ -8,7 +8,8 @@ resources:
     trigger: true
 
 variables:
-  - imageName: '$(imageName)'
+  - name: imageName
+    value: $(imageName)
 
 jobs:
     - job: DockerPublishj
