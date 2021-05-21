@@ -1,0 +1,22 @@
+resources:
+  pipelines:
+  - pipeline: build
+    source: Build
+    trigger: true
+
+jobs:
+    - job: DockerPublishj
+      displayName: 'Publish docker images'
+      variables:
+        BuildConfiguration: Release
+      workspace: 
+        clean: all
+      pool:
+        name: Azure Pipelines
+        vmImage: ubuntu-20.04
+      steps:
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            source: specific
+            project: 'Payment Tracker'
+            pipeline: build

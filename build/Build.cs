@@ -80,6 +80,7 @@ class Build : NukeBuild
             {
                 command += ":production";
             }
+            
             NpmTasks.Npm(command, AppDirectory);
 
             DotNetTasks.DotNetBuild(settings =>

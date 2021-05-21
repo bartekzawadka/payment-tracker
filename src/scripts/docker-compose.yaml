@@ -1,0 +1,48 @@
+version: "3.7"
+
+networks:
+    paymenttracker:
+        name: "paymenttracker"
+
+services: 
+    payment-tracker-db:
+        networks: 
+            - "paymenttracker"
+        image: mysql:5.6
+        restart: always
+        container_name: payment-tracker-db
+        command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
+        ports:
+        - 5555:3306
+        environment:
+        - MYSQL_ROOT_PASSWORD=1234
+
+    payment-tracker-api:
+        depends_on: 
+            - payment-tracker-db
+        networks: 
+            - "paymenttracker"
+        build: 
+            context: ../api/Payment.Tracker/Payment.Tracker.Api/bin/Debug/net5.0
+            dockerfile: ../../../Dockerfile
+        container_name: "payment-tracker-api"
+        restart: "on-failure"
+        image: "payment-tracker-api"
+        ports:
+            - 5000:5000
+        environment: 
+            - "ASPNETCORE_ENVIRONMENT=Docker"
+
+    payment-tracker-app:
+        depends_on: 
+            - payment-tracker-api
+        networks: 
+            - "paymenttracker"
+        container_name: "payment-tracker-app"
+        build: 
+            context: ../app/payment-tracker
+            dockerfile: ./Dockerfile
+        ports:
+            - 8100:8100
+        restart: "on-failure"
+        image: "payment-tracker-app"

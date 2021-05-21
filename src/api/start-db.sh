@@ -1,3 +1,3 @@
 #!/bin/bash
-docker stop nathalie-inventory-db
-docker-compose up -d
+docker stop payment-tracker-db
+docker-compose -f ../scripts/docker-compose.yaml up -d payment-tracker-db
