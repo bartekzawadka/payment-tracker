@@ -5,12 +5,18 @@ jobs:
       displayName: 'Build'
       variables:
         BuildConfiguration: Release
+        appVersion: '1.0.0'
       workspace: 
         clean: all
       pool:
         name: Azure Pipelines
         vmImage: ubuntu-20.04
       steps:
+      - script: |
+          PACKAGE_PATH = '$(Build.SourcesDirectory)/src/app/payment-tracker/package.json'
+          PACKAGE_VERSION=$(node -p -e "require($PACKAGE_PATH).version")
+          echo '##vso[task.setvariable variable=appVersion]$PACKAGE_VERSION'
+        displayName: Get app version
       - task: qetza.replacetokens.replacetokens-task.replacetokens@3
         displayName: 'Replace tokens in **/environment.prod.ts'
         inputs:
@@ -35,6 +41,9 @@ jobs:
           command: build
           buildContext: $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Api/bin/$(BuildConfiguration)/net5.0
           Dockerfile: $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Api/Dockerfile
+          tags:
+            - $(appVersion)
+            - latest
 
       - task: Docker@2
         displayName: Build APP image
@@ -43,6 +52,9 @@ jobs:
           command: build
           buildContext: $(Build.SourcesDirectory)/src/app/payment-tracker
           Dockerfile: $(Build.SourcesDirectory)/src/app/payment-tracker/Dockerfile
+          tags:
+            - $(appVersion)
+            - latest
 
       - task: Docker@2
         displayName: Publish API image
