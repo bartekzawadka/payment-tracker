@@ -12,16 +12,7 @@ jobs:
         vmImage: ubuntu-20.04
       steps:
       - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-        displayName: 'Replace tokens in **/appsettings.Production.config'
-        inputs:
-            rootDirectory: src
-            targetFiles: '**/appsettings.Production.json'
-            writeBOM: false
-            tokenPrefix: '##{'
-            tokenSuffix: '}##'
-
-      - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-        displayName: 'Replace tokens in **/appsettings.Production.config'
+        displayName: 'Replace tokens in **/environment.prod.ts'
         inputs:
             rootDirectory: src
             targetFiles: '**/environment.prod.ts'
