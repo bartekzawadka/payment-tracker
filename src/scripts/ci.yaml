@@ -41,9 +41,9 @@ jobs:
           command: build
           buildContext: $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Api/bin/$(BuildConfiguration)/net5.0
           Dockerfile: $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Api/Dockerfile
-          tags:
-            - $(appVersion)
-            - latest
+          tags: |
+            $(appVersion)
+            latest
 
       - task: Docker@2
         displayName: Build APP image
@@ -52,9 +52,9 @@ jobs:
           command: build
           buildContext: $(Build.SourcesDirectory)/src/app/payment-tracker
           Dockerfile: $(Build.SourcesDirectory)/src/app/payment-tracker/Dockerfile
-          tags:
-            - $(appVersion)
-            - latest
+          tags: |
+            $(appVersion)
+            latest
 
       - task: Docker@2
         displayName: Publish API image
