@@ -1,4 +1,12 @@
 name: 'Kubernetes release'
+trigger: none
+
+resources:
+  pipelines:
+  - pipeline: build   # Name of the pipeline resource
+    source: Build # Name of the pipeline referenced by the pipeline resource
+    project: Payment Tracker # Required only if the source pipeline is in another project
+    trigger: true #
 
 jobs:
     - job: Release
