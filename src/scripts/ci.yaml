@@ -64,6 +64,9 @@ jobs:
           containerRegistry: 'dockerhub-payment-tracker-api'
           repository: $(apiImageName)
           command: push
+          tags: |
+            $(appVersion)
+            latest
 
       - task: Docker@2
         displayName: Publish APP image
@@ -71,3 +74,6 @@ jobs:
           containerRegistry: 'dockerhub-payment-tracker-api'
           repository: $(appImageName)
           command: push
+          tags: |
+            $(appVersion)
+            latest          
