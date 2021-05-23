@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-tracker-api
+  annotations:
+    service.beta.kubernetes.io/azure-dns-label-name: "payment-tracker-api"
+  
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: payment-tracker-api
+  type: LoadBalancer

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-tracker-api-deployment
+  labels:
+    app: payment-tracker-api
+  
+spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: payment-tracker-api
+  template:
+    metadata:
+      labels:
+        app: payment-tracker-api
+    spec:
+      containers:
+        - name: payment-tracker-api
+          image: bartee/payment-tracker-api:latest
+          ports:
+            - containerPort: 5000
+              name: http
+          env:
+            - name: DB_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: dbConnectionString
+            - name: TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: tokenSecret
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: adminPassword
+            - name: APP_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: appHost
+
+    

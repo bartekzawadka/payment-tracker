@@ -61,7 +61,7 @@ jobs:
       - task: Docker@2
         displayName: Publish API image
         inputs:
-          containerRegistry: 'dockerhub-payment-tracker-api'
+          containerRegistry: 'dockerhub'
           repository: $(apiImageName)
           command: push
           tags: |
@@ -71,7 +71,7 @@ jobs:
       - task: Docker@2
         displayName: Publish APP image
         inputs:
-          containerRegistry: 'dockerhub-payment-tracker-api'
+          containerRegistry: 'dockerhub'
           repository: $(appImageName)
           command: push
           tags: |

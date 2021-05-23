@@ -17,3 +17,38 @@ jobs:
             writeBOM: false
             tokenPrefix: '##{'
             tokenSuffix: '}##'
+
+      - task: Kubernetes@1
+        displayName: 'Kubernetes apply secret'
+        inputs:
+          kubernetesServiceEndpoint: 'bz-kubernetes-cluster'
+          command: apply
+          arguments: '-f $(Build.SourcesDirectory)/src/scripts/k8s/secret.yaml'
+
+      - task: Kubernetes@1
+        displayName: 'Kubernetes apply API deployment'
+        inputs:
+          kubernetesServiceEndpoint: 'bz-kubernetes-cluster'
+          command: apply
+          arguments: '-f $(Build.SourcesDirectory)/src/scripts/k8s/api-deployment.yaml'
+
+      - task: Kubernetes@1
+        displayName: 'Kubernetes apply APP deployment'
+        inputs:
+          kubernetesServiceEndpoint: 'bz-kubernetes-cluster'
+          command: apply
+          arguments: '-f $(Build.SourcesDirectory)/src/scripts/k8s/app-deployment.yaml'
+
+      - task: Kubernetes@1
+        displayName: 'Kubernetes apply API service'
+        inputs:
+          kubernetesServiceEndpoint: 'bz-kubernetes-cluster'
+          command: apply
+          arguments: '-f $(Build.SourcesDirectory)/src/scripts/k8s/api-service.yaml'
+
+      - task: Kubernetes@1
+        displayName: 'Kubernetes apply APP service'
+        inputs:
+          kubernetesServiceEndpoint: 'bz-kubernetes-cluster'
+          command: apply
+          arguments: '-f $(Build.SourcesDirectory)/src/scripts/k8s/app-service.yaml'
