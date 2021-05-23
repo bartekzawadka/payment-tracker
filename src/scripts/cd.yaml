@@ -1,0 +1,19 @@
+name: 'Kubernetes release'
+
+jobs:
+    - job: Release
+      displayName: 'Release all'
+      workspace: 
+        clean: all
+      pool:
+        name: Azure Pipelines
+        vmImage: ubuntu-20.04
+      steps:
+      - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+        displayName: 'Prepare secrets'
+        inputs:
+            rootDirectory: src
+            targetFiles: '**/secret.yaml'
+            writeBOM: false
+            tokenPrefix: '##{'
+            tokenSuffix: '}##'
