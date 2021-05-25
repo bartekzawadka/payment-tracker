@@ -14,7 +14,6 @@ jobs:
       steps:
       - script: |
           PACKAGE_PATH="$(Build.SourcesDirectory)/src/app/payment-tracker/package.json"
-          #PACKAGE_VERSION=$(node -p -e "require('$PACKAGE_PATH').version")
           PACKAGE_VERSION=$(grep version $PACKAGE_PATH | sed 's/.*"version": "\(.*\)".*/\1/')
           echo "Setting app version: $PACKAGE_VERSION"
           echo "##vso[task.setvariable variable=appVersion]$PACKAGE_VERSION"
@@ -35,6 +34,9 @@ jobs:
 
       - script: './build.sh --target compile --configuration $(BuildConfiguration) --host AzurePipelines'
         displayName: 'Run NUKE build'
+
+      - script: './build.sh --target test --configuration $(BuildConfiguration) --host AzurePipelines'
+        displayName: 'Run NUKE test'        
 
       - task: Docker@2
         displayName: Build API image
@@ -59,6 +61,17 @@ jobs:
             latest
 
       - task: Docker@2
+        displayName: Build Notifier image
+        inputs:
+          repository: $(notifierImageName)
+          command: build
+          buildContext: $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Notifier/bin/$(BuildConfiguration)/net5.0
+          Dockerfile: $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Notifier/Dockerfile
+          tags: |
+            $(appVersion)
+            latest
+
+      - task: Docker@2
         displayName: Publish API image
         inputs:
           containerRegistry: 'dockerhub'
@@ -76,4 +89,14 @@ jobs:
           command: push
           tags: |
             $(appVersion)
-            latest          
+            latest
+            
+      - task: Docker@2
+        displayName: Publish Notifier image
+        inputs:
+          containerRegistry: 'dockerhub'
+          repository: $(notifierImageName)
+          command: push
+          tags: |
+            $(appVersion)
+            latest

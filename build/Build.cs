@@ -33,6 +33,7 @@ class Build : NukeBuild
     [Solution("src/api/Payment.Tracker/Payment.Tracker.sln")]
     readonly Solution Solution;
     readonly AbsolutePath SourceDirectory = RootDirectory / "src";
+    readonly AbsolutePath ApiDirectory = RootDirectory / "src" / "api" / "Payment.Tracker";
     readonly AbsolutePath AppDirectory = RootDirectory / "src" / "app" / "payment-tracker";
     readonly AbsolutePath PublishDirectory = RootDirectory / "publish";
 
@@ -88,6 +89,18 @@ class Build : NukeBuild
                     .SetProjectFile(Solution.GetProject("Payment.Tracker.Api")?.Path)
                     .SetConfiguration(Configuration)
                     .SetVerbosity(DotNetVerbosity.Minimal));
+        });
+
+    Target Test => _ => _
+        .DependsOn(Restore)
+        .Executes(() =>
+        {
+            DotNetTasks.DotNetTest(settings =>
+                settings
+                    .SetConfiguration(Configuration)
+                    .SetProcessWorkingDirectory(ApiDirectory)
+                    .SetNoRestore(true)
+                    .SetProcessLogOutput(true));
         });
 
     Target Publish => _ => _

@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-tracker-notifier-deployment
+  labels:
+    app: payment-tracker-notifier
+  
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: payment-tracker-notifier
+  template:
+    metadata:
+      labels:
+        app: payment-tracker-notifier
+    spec:
+      containers:
+        - name: payment-tracker-notifier
+          image: bartee/payment-tracker-notifier:latest
+          ports:
+            - containerPort: 6000
+              name: http
+          env:
+            - name: DB_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: dbConnectionString
+            - name: NOTIFIER_EMAIL_APP_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: appHost
+            - name: NOTIFIER_EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: notifierEmailPassword
+            - name: NOTIFIER_EMAIL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: notifierEmailPort
+            - name: NOTIFIER_EMAIL_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: notifierEmailServer
+            - name: NOTIFIER_EMAIL_TO
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: notifierEmailTo
+            - name: NOTIFIER_EMAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: notifierEmailUsername
+            - name: NOTIFIER_EMAIL_FROM_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: notifierEmailFromAddress
+            - name: NOTIFIER_EMAIL_FROM_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: notifierEmailFromName
+            - name: NOTIFIER_EMAIL_USE_SSL
+              valueFrom:
+                secretKeyRef:
+                  name: payment-tracker-api-secret
+                  key: notifierEmailUseSsl

@@ -13,6 +13,7 @@ using Payment.Tracker.Notifier.Email;
 using Payment.Tracker.Notifier.Email.NotificationProviders;
 using Payment.Tracker.Notifier.Extensions;
 using Payment.Tracker.Notifier.Models;
+using Payment.Tracker.Utils.EnvironmentVariables;
 using Quartz;
 
 namespace Payment.Tracker.Notifier
@@ -52,10 +53,24 @@ namespace Payment.Tracker.Notifier
 
             IConfigurationSection emailConfigSection = Configuration.GetSection(nameof(EmailConfiguration));
             var emailConfiguration = emailConfigSection.Get<EmailConfiguration>();
+            UpdateConfigBasedOnEnvVars(emailConfiguration);
             services.AddSingleton(emailConfiguration);
             
             RegisterRepositories(services);
             RegisterServices(services);
+        }
+
+        private static void UpdateConfigBasedOnEnvVars(EmailConfiguration emailConfiguration)
+        {
+            EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, string>(emailConfiguration, configuration => configuration.Password, "NOTIFIER_EMAIL_PASSWORD");
+            EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, string>(emailConfiguration, configuration => configuration.Port, "NOTIFIER_EMAIL_PORT");
+            EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, string>(emailConfiguration, configuration => configuration.Server, "NOTIFIER_EMAIL_SERVER");
+            EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, string>(emailConfiguration, configuration => configuration.To, "NOTIFIER_EMAIL_TO");
+            EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, string>(emailConfiguration, configuration => configuration.Username, "NOTIFIER_EMAIL_USERNAME");
+            EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, string>(emailConfiguration, configuration => configuration.AppEndpoint, "NOTIFIER_EMAIL_APP_ENDPOINT");
+            EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, string>(emailConfiguration, configuration => configuration.FromAddress, "NOTIFIER_EMAIL_FROM_ADDRESS");
+            EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, string>(emailConfiguration, configuration => configuration.FromName, "NOTIFIER_EMAIL_FROM_NAME");
+            EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, bool>(emailConfiguration, configuration => configuration.UseSsl, "NOTIFIER_EMAIL_USE_SSL");
         }
         
         private static void RegisterRepositories(IServiceCollection services)

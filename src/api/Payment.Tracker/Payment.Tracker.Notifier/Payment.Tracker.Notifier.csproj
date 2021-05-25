@@ -19,5 +19,6 @@
     <ItemGroup>
       <ProjectReference Include="..\Payment.Tracker.BusinessLogic\Payment.Tracker.BusinessLogic.csproj" />
       <ProjectReference Include="..\Payment.Tracker.DataLayer\Payment.Tracker.DataLayer.csproj" />
+      <ProjectReference Include="..\Payment.Tracker.Utils\Payment.Tracker.Utils.csproj" />
     </ItemGroup>
 </Project>

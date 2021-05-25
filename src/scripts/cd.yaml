@@ -48,6 +48,13 @@ jobs:
           arguments: '-f $(Build.SourcesDirectory)/src/scripts/k8s/app-deployment.yaml'
 
       - task: Kubernetes@1
+        displayName: 'Kubernetes apply Notifier deployment'
+        inputs:
+          kubernetesServiceEndpoint: 'bz-kubernetes-cluster'
+          command: apply
+          arguments: '-f $(Build.SourcesDirectory)/src/scripts/k8s/notifier-deployment.yaml'
+
+      - task: Kubernetes@1
         displayName: 'Kubernetes apply API service'
         inputs:
           kubernetesServiceEndpoint: 'bz-kubernetes-cluster'

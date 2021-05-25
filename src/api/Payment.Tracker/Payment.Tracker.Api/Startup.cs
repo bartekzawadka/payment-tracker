@@ -77,7 +77,7 @@ namespace Payment.Tracker.Api
             RegisterSeeds(services);
         }
 
-        private static void ApplyEnvironmentVariables(SecuritySettings securitySettings)
+        private static void ApplyEnvironmentVariables(ISecuritySettings securitySettings)
         {
             var tokenSecretVar = Environment.GetEnvironmentVariable("TOKEN_SECRET");
             if (!string.IsNullOrWhiteSpace(tokenSecretVar))
