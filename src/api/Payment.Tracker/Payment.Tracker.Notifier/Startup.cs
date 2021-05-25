@@ -63,7 +63,7 @@ namespace Payment.Tracker.Notifier
         private static void UpdateConfigBasedOnEnvVars(EmailConfiguration emailConfiguration)
         {
             EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, string>(emailConfiguration, configuration => configuration.Password, "NOTIFIER_EMAIL_PASSWORD");
-            EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, string>(emailConfiguration, configuration => configuration.Port, "NOTIFIER_EMAIL_PORT");
+            EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, int>(emailConfiguration, configuration => configuration.Port, "NOTIFIER_EMAIL_PORT");
             EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, string>(emailConfiguration, configuration => configuration.Server, "NOTIFIER_EMAIL_SERVER");
             EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, string>(emailConfiguration, configuration => configuration.To, "NOTIFIER_EMAIL_TO");
             EnvironmentVariablesHelper.SetValueFromEnvVar<EmailConfiguration, string>(emailConfiguration, configuration => configuration.Username, "NOTIFIER_EMAIL_USERNAME");
