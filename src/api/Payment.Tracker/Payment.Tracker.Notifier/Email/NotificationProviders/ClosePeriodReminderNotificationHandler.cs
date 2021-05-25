@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Payment.Tracker.DataLayer.Models;
@@ -26,7 +27,10 @@ namespace Payment.Tracker.Notifier.Email.NotificationProviders
             var now = DateTime.Now;
             var currentIds = await _paymentSetRepository.GetAsAsync(
                 set => set.Id,
-                set => !set.InvoicesAttached && set.ForMonth.Year == now.Year && set.ForMonth.Month == now.Month);
+                set => (set.PaymentPositions.Any(x => !x.Paid)
+                        || !set.InvoicesAttached)
+                       && set.ForMonth.Year == now.Year
+                       && set.ForMonth.Month == now.Month);
 
             if (currentIds.Count <= 0)
             {
