@@ -89,6 +89,12 @@ class Build : NukeBuild
                     .SetProjectFile(Solution.GetProject("Payment.Tracker.Api")?.Path)
                     .SetConfiguration(Configuration)
                     .SetVerbosity(DotNetVerbosity.Minimal));
+
+            DotNetTasks.DotNetBuild(settings =>
+                settings
+                    .SetProjectFile(Solution.GetProject("Payment.Tracker.Notifier")?.Path)
+                    .SetConfiguration(Configuration)
+                    .SetVerbosity(DotNetVerbosity.Minimal));
         });
 
     Target Test => _ => _
@@ -125,5 +131,14 @@ class Build : NukeBuild
                     .SetRuntime("linux-x64")
                     .SetProject(Solution.GetProject("Payment.Tracker.Api"))
                     .SetOutput(PublishDirectory / "api"));
+            
+            DotNetTasks.DotNetPublish(settings =>
+                settings
+                    .SetConfiguration(Configuration)
+                    .SetVerbosity(DotNetVerbosity.Minimal)
+                    .SetFramework("net5.0")
+                    .SetRuntime("linux-x64")
+                    .SetProject(Solution.GetProject("Payment.Tracker.Notifier"))
+                    .SetOutput(PublishDirectory / "notifier"));
         });
 }
