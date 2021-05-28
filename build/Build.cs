@@ -101,18 +101,13 @@ class Build : NukeBuild
         .DependsOn(Restore)
         .Executes(() =>
         {
-            var testResultsDir = RootDirectory / "TestResults";
-            if (!DirectoryExists(testResultsDir))
-            {
-                Directory.CreateDirectory(testResultsDir);
-            }
-            
             DotNetTasks.DotNetTest(settings =>
                 settings
                     .SetConfiguration(Configuration)
                     .SetProjectFile(ApiDirectory / "Tests" / "Payment.Tracker.Utils.UnitTests" / "Payment.Tracker.Utils.UnitTests.csproj")
                     .SetProcessWorkingDirectory(ApiDirectory)
-                    .SetProcessLogFile(testResultsDir / "UnitTestResults.trx")
+                    .SetLogger("trx;LogFileName=UnitTestResults.trx")
+                    .SetNoBuild(true)
                     .SetNoRestore(true)
                     .SetProcessLogOutput(true));
         });
