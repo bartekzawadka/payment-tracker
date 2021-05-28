@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Payment.Tracker.BusinessLogic.Dto.Payment;
+using Payment.Tracker.BusinessLogic.Mappers;
 using Payment.Tracker.BusinessLogic.ServiceAction;
 using Payment.Tracker.DataLayer.Models;
 using Payment.Tracker.DataLayer.Repositories;
@@ -40,24 +41,12 @@ namespace Payment.Tracker.BusinessLogic.Services
             }
 
             List<PaymentPositionDto> positions = await _paymentPositionRepository.GetAsAsync(
-                a => new PaymentPositionDto
-                {
-                    Id = a.Id,
-                    PaymentSetId = a.PaymentSetId,
-                    Name = a.Name,
-                    Paid = a.Paid,
-                    Price = a.Price,
-                    InvoiceReceived = a.InvoiceReceived,
-                    HasInvoice = a.HasInvoice
-                },
+                position => PaymentPositionMapper.ToDto(position),
                 position => position.PaymentSetId == id);
 
-            PaymentSetDto dto = await _paymentSetsRepository.GetOneAsAsync(id, set => new PaymentSetDto
-            {
-                Id = set.Id,
-                ForMonth = set.ForMonth,
-                InvoicesAttached = set.InvoicesAttached
-            });
+            PaymentSetDto dto = await _paymentSetsRepository.GetOneAsAsync(
+                id,
+                set => PaymentSetMapper.ToDto(set));
 
             dto.Positions = positions;
             return ServiceActionResult<PaymentSetDto>.GetSuccess(dto);
@@ -74,15 +63,7 @@ namespace Payment.Tracker.BusinessLogic.Services
             
             PaymentSet paymentSet = await _paymentSetsRepository.GetOneAsync(set => set.ForMonth.Year == now.Year && set.ForMonth.Month == now.Month);
             List<PaymentPositionDto> paymentPositions = await _paymentPositionRepository.GetAsAsync(
-                position => new PaymentPositionDto
-                {
-                    Id = position.Id,
-                    Name = position.Name,
-                    Paid = position.Paid,
-                    Price = position.Price,
-                    HasInvoice = position.HasInvoice,
-                    InvoiceReceived = position.InvoiceReceived
-                },
+                position => PaymentPositionMapper.ToDto(position),
                 position => position.PaymentSetId == paymentSet.Id
             );
 
@@ -107,15 +88,7 @@ namespace Payment.Tracker.BusinessLogic.Services
 
             List<PaymentPosition> positions = dto
                 .Positions
-                .Select(x => new PaymentPosition
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Paid = x.Paid,
-                    Price = x.Price,
-                    InvoiceReceived = x.InvoiceReceived,
-                    HasInvoice = x.HasInvoice
-                })
+                .Select(x => PaymentPositionMapper.ToModel(x))
                 .ToList();
 
             var set = new PaymentSet
@@ -128,24 +101,7 @@ namespace Payment.Tracker.BusinessLogic.Services
             await _paymentSetsRepository.InsertAsync(set);
             await _paymentSetsRepository.SaveChangesAsync();
 
-            var result = new PaymentSetDto
-            {
-                Id = set.Id,
-                ForMonth = set.ForMonth,
-                InvoicesAttached = set.InvoicesAttached,
-                Positions = set
-                    .PaymentPositions
-                    .Select(x => new PaymentPositionDto
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Paid = x.Paid,
-                        Price = x.Price,
-                        HasInvoice = x.HasInvoice,
-                        InvoiceReceived = x.InvoiceReceived
-                    })
-                    .ToList()
-            };
+            var result = PaymentSetMapper.ToDto(set, positions);
 
             return ServiceActionResult<PaymentSetDto>.GetCreated(result);
         }
@@ -173,39 +129,13 @@ namespace Payment.Tracker.BusinessLogic.Services
             set.InvoicesAttached = dto.InvoicesAttached;
             set.PaymentPositions = dto
                 .Positions
-                .Select(p => new PaymentPosition
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Paid = p.Paid,
-                    Price = p.Price,
-                    InvoiceReceived = p.InvoiceReceived,
-                    HasInvoice = p.HasInvoice,
-                    PaymentSetId = set.Id
-                })
+                .Select(PaymentPositionMapper.ToModel)
                 .ToList();
 
             await _paymentSetsRepository.SaveChangesAsync();
-            
-            var result = new PaymentSetDto
-            {
-                Id = set.Id,
-                ForMonth = set.ForMonth,
-                InvoicesAttached = set.InvoicesAttached,
-                Positions = set
-                    .PaymentPositions
-                    .Select(x => new PaymentPositionDto
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Paid = x.Paid,
-                        Price = x.Price,
-                        HasInvoice = x.HasInvoice,
-                        InvoiceReceived = x.InvoiceReceived
-                    })
-                    .ToList()
-            };
-            
+
+            var result = PaymentSetMapper.ToDto(set, set.PaymentPositions);
+
             return ServiceActionResult<PaymentSetDto>.GetSuccess(result);
         }
 

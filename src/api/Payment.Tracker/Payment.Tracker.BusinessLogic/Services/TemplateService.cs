@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Payment.Tracker.BusinessLogic.Dto.Template;
+using Payment.Tracker.BusinessLogic.Mappers;
 using Payment.Tracker.BusinessLogic.ServiceAction;
 using Payment.Tracker.DataLayer.Models;
 using Payment.Tracker.DataLayer.Repositories;
@@ -20,12 +21,7 @@ namespace Payment.Tracker.BusinessLogic.Services
         public async Task<PaymentSetTemplateDto> GetTemplateAsync()
         {
             List<PaymentPositionTemplateDto> templatePositions = await _positionTemplateRepo.GetAsAsync(
-                template => new PaymentPositionTemplateDto
-                {
-                    Id = template.Id,
-                    Name = template.Name,
-                    HasInvoice = template.HasInvoice
-                });
+                template => PaymentPositionTemplateMapper.ToDto(template));
 
             return new PaymentSetTemplateDto
             {
@@ -43,12 +39,7 @@ namespace Payment.Tracker.BusinessLogic.Services
 
             var newPositionsMapped = dto
                 .Positions
-                .Select(x => new PaymentPositionTemplate
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    HasInvoice = x.HasInvoice
-                })
+                .Select(PaymentPositionTemplateMapper.ToModel)
                 .ToList();
 
             await _positionTemplateRepo.InsertManyAsync(newPositionsMapped);
@@ -57,13 +48,7 @@ namespace Payment.Tracker.BusinessLogic.Services
             return ServiceActionResult<PaymentSetTemplateDto>.GetCreated(
                 new PaymentSetTemplateDto
                 {
-                    Positions =
-                        newPositionsMapped.Select(x => new PaymentPositionTemplateDto
-                        {
-                            Id = x.Id,
-                            Name = x.Name,
-                            HasInvoice = x.HasInvoice
-                        }).ToList()
+                    Positions = newPositionsMapped.Select(PaymentPositionTemplateMapper.ToDto).ToList()
                 }
             );
         }
