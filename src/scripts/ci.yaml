@@ -50,7 +50,7 @@ jobs:
           testResultsFormat: VSTest
           testResultsFiles: '*.trx'
           failTaskOnFailedTests: true
-          testRunTitle: 'Integration Tests'
+          testRunTitle: 'Unit and integration Tests'
 
       - task: Docker@2
         displayName: Build API image
