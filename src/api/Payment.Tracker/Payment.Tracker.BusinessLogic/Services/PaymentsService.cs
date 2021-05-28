@@ -44,9 +44,8 @@ namespace Payment.Tracker.BusinessLogic.Services
                 position => PaymentPositionMapper.ToDto(position),
                 position => position.PaymentSetId == id);
 
-            PaymentSetDto dto = await _paymentSetsRepository.GetOneAsAsync(
-                id,
-                set => PaymentSetMapper.ToDto(set));
+            PaymentSet model = await _paymentSetsRepository.GetByIdAsync(id);
+            PaymentSetDto dto = PaymentSetMapper.ToDto(model);
 
             dto.Positions = positions;
             return ServiceActionResult<PaymentSetDto>.GetSuccess(dto);

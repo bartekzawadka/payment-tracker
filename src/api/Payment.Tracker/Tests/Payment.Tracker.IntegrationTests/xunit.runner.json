@@ -1,0 +1,5 @@
+{
+  "shadowCopy": false,
+  "parallelizeTestCollections": false,
+  "parallelizeAssembly": false
+}

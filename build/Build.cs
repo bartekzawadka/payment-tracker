@@ -104,6 +104,7 @@ class Build : NukeBuild
             DotNetTasks.DotNetTest(settings =>
                 settings
                     .SetConfiguration(Configuration)
+                    .SetProjectFile(ApiDirectory / "Tests" / "Payment.Tracker.Utils.UnitTests" / "Payment.Tracker.Utils.UnitTests.csproj")
                     .SetProcessWorkingDirectory(ApiDirectory)
                     .SetNoRestore(true)
                     .SetProcessLogOutput(true));

@@ -36,7 +36,21 @@ jobs:
         displayName: 'Run NUKE build'
 
       - script: './build.sh --target test --configuration $(BuildConfiguration) --host AzurePipelines'
-        displayName: 'Run NUKE test'        
+        displayName: 'Run NUKE unit tests'
+
+      - task: Bash@3
+        displayName: 'Run integration tests'
+        inputs:
+          targetType: filePath
+          filePath: ./src/api/Payment.Tracker/Tests/Docker/run.sh
+
+      - task: PublishTestResults@2
+        displayName: 'Publish tests results'
+        inputs:
+          testResultsFormat: VSTest
+          testResultsFiles: '*.trx'
+          failTaskOnFailedTests: true
+          testRunTitle: 'Integration Tests'
 
       - task: Docker@2
         displayName: Build API image
