@@ -35,12 +35,12 @@ jobs:
       - script: './build.sh --target compile --configuration $(BuildConfiguration) --host AzurePipelines'
         displayName: 'Run NUKE build'
 
-      - task: DotNetCoreCLI@2
-        displayName: 'Run unit tests'
-        inputs:
-          command: test
-          projects: '**/*[Uu]nit[Tt]ests/*.csproj'
-          arguments: '--configuration $(BuildConfiguration)'        
+      # - task: DotNetCoreCLI@2
+      #   displayName: 'Run unit tests'
+      #   inputs:
+      #     command: test
+      #     projects: '**/*[Uu]nit[Tt]ests/*.csproj'
+      #     arguments: '--configuration $(BuildConfiguration)'        
 
       - task: Bash@3
         displayName: 'Run integration tests'
