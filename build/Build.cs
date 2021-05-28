@@ -106,8 +106,7 @@ class Build : NukeBuild
                     .SetConfiguration(Configuration)
                     .SetProjectFile(ApiDirectory / "Tests" / "Payment.Tracker.Utils.UnitTests" / "Payment.Tracker.Utils.UnitTests.csproj")
                     .SetProcessWorkingDirectory(ApiDirectory)
-                    .SetLogger("trx;LogFileName=UnitTestResults.trx")
-                    .SetNoBuild(true)
+                    .SetLogger("\"trx;LogFileName=UnitTestResults.trx\"")
                     .SetNoRestore(true)
                     .SetProcessLogOutput(true));
         });
