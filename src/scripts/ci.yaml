@@ -48,7 +48,7 @@ jobs:
         displayName: 'Publish tests results'
         inputs:
           testResultsFormat: VSTest
-          testResultsFiles: '*.trx'
+          testResultsFiles: '**/*.trx'
           failTaskOnFailedTests: true
           testRunTitle: 'Unit and integration Tests'
 
