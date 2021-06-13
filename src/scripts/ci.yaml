@@ -63,7 +63,7 @@ jobs:
           tags: |
             $(appVersion)
             latest
-          condition: and(succeeded(), eq(variables.isMain, true))  
+        condition: and(succeeded(), eq(variables.isMain, true))  
 
       - task: Docker@2
         displayName: Build APP image
@@ -75,7 +75,7 @@ jobs:
           tags: |
             $(appVersion)
             latest
-          condition: and(succeeded(), eq(variables.isMain, true))  
+        condition: and(succeeded(), eq(variables.isMain, true))  
 
       - task: Docker@2
         displayName: Build Notifier image
@@ -87,7 +87,7 @@ jobs:
           tags: |
             $(appVersion)
             latest
-          condition: and(succeeded(), eq(variables.isMain, true))  
+        condition: and(succeeded(), eq(variables.isMain, true))  
 
       - task: Docker@2
         displayName: Publish API image
@@ -98,7 +98,7 @@ jobs:
           tags: |
             $(appVersion)
             latest
-          condition: and(succeeded(), eq(variables.isMain, true))  
+        condition: and(succeeded(), eq(variables.isMain, true))  
 
       - task: Docker@2
         displayName: Publish APP image
@@ -109,7 +109,7 @@ jobs:
           tags: |
             $(appVersion)
             latest
-          condition: and(succeeded(), eq(variables.isMain, true))  
+        condition: and(succeeded(), eq(variables.isMain, true))  
             
       - task: Docker@2
         displayName: Publish Notifier image
@@ -120,4 +120,4 @@ jobs:
           tags: |
             $(appVersion)
             latest
-          condition: and(succeeded(), eq(variables.isMain, true))  
+        condition: and(succeeded(), eq(variables.isMain, true))  
