@@ -1,6 +1,6 @@
 namespace Payment.Tracker.DataLayer.Models
 {
-    public class User : Identifiable
+    public class User : Document
     {
         public string UserName { get; set; }
 

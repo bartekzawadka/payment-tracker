@@ -1,6 +1,6 @@
 namespace Payment.Tracker.DataLayer.Models
 {
-    public class PaymentPositionTemplate : Identifiable
+    public class PaymentPositionTemplate : Document
     {
         public string Name { get; set; }
 

@@ -1,10 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -66,12 +66,10 @@ namespace Payment.Tracker.Api
             {
                 connectionString = connectionStringVar;
             }
-            
-            services.AddDbContext<PaymentContext>((_, builder) =>
-            {
-                builder.UseMySql(connectionString, new MySqlServerVersion(Consts.DbServerVersion));
-            });
-            
+
+            var context = new PaymentContext(connectionString);
+            services.AddSingleton(context);
+
             RegisterRepositories(services);
             RegisterServices(services);
             RegisterSeeds(services);
@@ -100,22 +98,21 @@ namespace Payment.Tracker.Api
         
         private static void RegisterRepositories(IServiceCollection services)
         {
-            services.AddScoped<IGenericRepository<User>, GenericRepository<User>>();
-            services.AddScoped<IGenericRepository<PaymentPositionTemplate>, GenericRepository<PaymentPositionTemplate>>();
-            services.AddScoped<IGenericRepository<PaymentSet>, GenericRepository<PaymentSet>>();
-            services.AddScoped<IGenericRepository<PaymentPosition>, GenericRepository<PaymentPosition>>();
+            services.AddSingleton<IGenericRepository<User>, GenericRepository<User>>();
+            services.AddSingleton<IGenericRepository<PaymentPositionTemplate>, GenericRepository<PaymentPositionTemplate>>();
+            services.AddSingleton<IGenericRepository<PaymentSet>, GenericRepository<PaymentSet>>();
         }
 
         private static void RegisterServices(IServiceCollection services)
         {
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddSingleton<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ITemplateService, TemplateService>();
             services.AddScoped<IPaymentsService, PaymentsService>();
         }
         
         private static void RegisterSeeds(IServiceCollection services)
         {
-            services.AddScoped<ISeed, UserSeed>();
+            services.AddSingleton<ISeed, UserSeed>();
         }
         
         private static void ConfigureAuth(IServiceCollection services, ISecuritySettings securitySettings)
@@ -162,22 +159,16 @@ namespace Payment.Tracker.Api
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-
-            UpdateDatabase(app);
+            
+            SeedDatabase(app);
         }
         
-        private static void UpdateDatabase(IApplicationBuilder app)
+        private static void SeedDatabase(IApplicationBuilder app)
         {
-            using IServiceScope serviceScope = app
-                .ApplicationServices
-                .GetRequiredService<IServiceScopeFactory>()
-                .CreateScope();
-            using var context = serviceScope.ServiceProvider.GetService<PaymentContext>();
-            context?.Database.Migrate();
-
-            foreach (ISeed service in serviceScope.ServiceProvider.GetServices<ISeed>())
+            IEnumerable<ISeed> seeders = app.ApplicationServices.GetServices<ISeed>();
+            foreach (ISeed seeder in seeders)
             {
-                service.SeedAsync().GetAwaiter().GetResult();
+                seeder.SeedAsync().GetAwaiter().GetResult();
             }
         }
     }

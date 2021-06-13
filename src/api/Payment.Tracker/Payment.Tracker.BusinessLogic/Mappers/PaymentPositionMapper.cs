@@ -8,8 +8,6 @@ namespace Payment.Tracker.BusinessLogic.Mappers
         public static PaymentPositionDto ToDto(PaymentPosition model) =>
             new()
             {
-                Id = model.Id,
-                PaymentSetId = model.PaymentSetId,
                 Name = model.Name,
                 Paid = model.Paid,
                 Price = model.Price,
@@ -20,7 +18,6 @@ namespace Payment.Tracker.BusinessLogic.Mappers
         public static PaymentPosition ToModel(PaymentPositionDto dto) =>
             new()
             {
-                Id = dto.Id,
                 Name = dto.Name,
                 Paid = dto.Paid,
                 Price = dto.Price,

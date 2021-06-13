@@ -64,7 +64,7 @@ namespace Payment.Tracker.IntegrationTests.Tests
                 true);
 
             result.IsSuccess.Should().BeTrue();
-            result.Data.Id.Should().Be(0);
+            result.Data.Id.Should().BeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace Payment.Tracker.IntegrationTests.Tests
                 ApiCallFixture.InsertDto);
 
             result.IsSuccess.Should().BeTrue();
-            result.Data.Id.Should().Be(1);
+            result.Data.Id.Should().NotBeNullOrWhiteSpace();
             
             ApiCallFixture.InsertDto.Id = result.Data.Id;
         }
@@ -105,7 +105,7 @@ namespace Payment.Tracker.IntegrationTests.Tests
         {
             ApiResponse<PaymentSetDto> result = await CallAsync<PaymentSetDto>(
                 HttpMethod.Get,
-                ApiCallFixture.InsertDto.Id.ToString(),
+                ApiCallFixture.InsertDto.Id,
                 true,
                 true);
 
@@ -140,7 +140,7 @@ namespace Payment.Tracker.IntegrationTests.Tests
 
             ApiResponse<PaymentSetDto> result = await CallAsync<PaymentSetDto, PaymentSetDto>(
                 HttpMethod.Put,
-                ApiCallFixture.InsertDto.Id.ToString(),
+                ApiCallFixture.InsertDto.Id,
                 true,
                 true,
                 ApiCallFixture.InsertDto);
@@ -201,7 +201,7 @@ namespace Payment.Tracker.IntegrationTests.Tests
         {
             ApiResponse<PaymentSetDto> result = await CallAsync<PaymentSetDto>(
                 HttpMethod.Delete,
-                ApiCallFixture.InsertDto.Id.ToString(),
+                ApiCallFixture.InsertDto.Id,
                 true,
                 true);
 
@@ -214,7 +214,7 @@ namespace Payment.Tracker.IntegrationTests.Tests
         {
             ApiResponse<PaymentSetDto> result = await CallAsync<PaymentSetDto>(
                 HttpMethod.Get,
-                ApiCallFixture.InsertDto.Id.ToString(),
+                ApiCallFixture.InsertDto.Id,
                 true,
                 false);
 

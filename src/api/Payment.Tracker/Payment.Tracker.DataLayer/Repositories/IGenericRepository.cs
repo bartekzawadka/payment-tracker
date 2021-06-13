@@ -1,59 +1,44 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Payment.Tracker.DataLayer.Models;
+using Payment.Tracker.DataLayer.Sys;
 
 namespace Payment.Tracker.DataLayer.Repositories
 {
-    public interface IGenericRepository<TEntity> where TEntity : Identifiable
+    public interface IGenericRepository<TCollection> where TCollection : Document
     {
-        Task<bool> ExistAsync(Expression<Func<TEntity, bool>> filter);
+        Task<bool> ExistsAsync<TFilter>(TFilter filter) where TFilter : Filter<TCollection>, new();
 
-        Task<int> CountAsync(Expression<Func<TEntity, bool>> filter);
+        Task<long> CountAsync<TFilter>(TFilter filter) where TFilter : Filter<TCollection>, new();
 
-        Task<List<TEntity>> GetAllAsync(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            params Expression<Func<TEntity, object>>[] includeNavigations);
+        Task<List<TNew>> GetAllAsAsync<TFilter, TNew>(
+            Expression<Func<TCollection, TNew>> selectClause,
+            TFilter filter = (TFilter) null)
+            where TFilter : Filter<TCollection>, new();
+
+        Task<TCollection> GetByIdAsync(string id);
+
+        Task<TOut> GetByIdAsAsync<TOut>(
+            string id,
+            Expression<Func<TCollection, TOut>> selectClause);
+
+        Task<TCollection> GetOneAsync<TFilter>(TFilter filter) where TFilter : Filter<TCollection>, new();
+
+        Task<TOut> GetOneAsAsync<TFilter, TOut>(
+            TFilter filter,
+            Expression<Func<TCollection, TOut>> selectClause)
+            where TFilter : Filter<TCollection>, new();
         
-        List<TOut> GetAs<TOut>(
-            Expression<Func<TEntity, TOut>> selectExpression,
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            params Expression<Func<TEntity, object>>[] includeNavigations);
+        Task InsertAsync(TCollection item);
 
-        Task<TEntity> GetByIdAsync(object id);
+        Task InsertManyAsync(IEnumerable<TCollection> items);
 
-        Task<TEntity> GetByIdWithIncludesAsync(object id, params Expression<Func<TEntity, object>>[] includeNavigations);
+        Task UpdateAsync(string id, TCollection item);
 
-        Task<List<TOut>> GetAsAsync<TOut>(
-            Expression<Func<TEntity, TOut>> selectExpression,
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            params Expression<Func<TEntity, object>>[] includeNavigations);
+        Task DeleteAsync(string id);
 
-        // Task<PagedList<TOut>> GetPagedAsAsync<TOut>(
-        //     int pageIndex,
-        //     int pageSize,
-        //     Expression<Func<TEntity, TOut>> selectExpression,
-        //     Expression<Func<TEntity, bool>> filter = null,
-        //     Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-        //     params Expression<Func<TEntity, object>>[] includeNavigations);
-
-        Task<TEntity> GetOneAsync(Expression<Func<TEntity, bool>> filter);
-
-        Task<TOut> GetOneAsAsync<TOut>(object id, Expression<Func<TEntity, TOut>> selectExpression);
-
-        Task<TEntity> InsertAsync(TEntity entity);
-
-        Task InsertManyAsync(IEnumerable<TEntity> entities);
-
-        void Delete(object id);
-
-        void Delete(TEntity entityToDelete);
-
-        Task SaveChangesAsync();
+        Task DeleteAsync(IEnumerable<string> ids);
     }
 }

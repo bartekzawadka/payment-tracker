@@ -28,7 +28,7 @@ namespace Payment.Tracker.BusinessLogic.Seeds
 
         public async Task SeedAsync()
         {
-            if (await _usersRepository.ExistAsync(u => u.UserName == AdminUserName))
+            if (await _usersRepository.ExistsAsync(new Filter<User>(u => u.UserName == AdminUserName)))
             {
                 return;
             }
@@ -45,7 +45,6 @@ namespace Payment.Tracker.BusinessLogic.Seeds
             }
 
             await _usersRepository.InsertAsync(user);
-            await _usersRepository.SaveChangesAsync();
         }
     }
 }

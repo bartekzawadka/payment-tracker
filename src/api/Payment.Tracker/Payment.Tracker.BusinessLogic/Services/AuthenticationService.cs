@@ -11,6 +11,7 @@ using Payment.Tracker.BusinessLogic.Dto.Auth;
 using Payment.Tracker.BusinessLogic.ServiceAction;
 using Payment.Tracker.DataLayer.Models;
 using Payment.Tracker.DataLayer.Repositories;
+using Payment.Tracker.DataLayer.Sys;
 
 namespace Payment.Tracker.BusinessLogic.Services
 {
@@ -27,7 +28,7 @@ namespace Payment.Tracker.BusinessLogic.Services
 
         public async Task<IServiceActionResult<TokenDto>> AuthenticateAsync(string password)
         {
-            User user = await _usersRepository.GetOneAsync(u => u.UserName == "admin");
+            User user = await _usersRepository.GetOneAsync(new Filter<User>(u => u.UserName == "admin"));
             if (user == null)
             {
                 return ServiceActionResult<TokenDto>.GetUnauthorized("Nie odnaleziono użytkownika administratora");

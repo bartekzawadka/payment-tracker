@@ -102,7 +102,7 @@ namespace Payment.Tracker.IntegrationTests.Tests
             return message;
         }
 
-        private async Task<HttpRequestMessage> GetRequestMessageAsync<T>(HttpMethod method, string url, T data)
+        private async Task<HttpRequestMessage> GetRequestMessageAsync<TT>(HttpMethod method, string url, TT data)
         {
             HttpRequestMessage message = await GetRequestMessageAsync(method, url);
             message.Content = GetStringContent(data);
@@ -110,7 +110,7 @@ namespace Payment.Tracker.IntegrationTests.Tests
             return message;
         }
         
-        private static StringContent GetStringContent<T>(T data) =>
+        private static StringContent GetStringContent<TT>(TT data) =>
             new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
         
         private static ApiResponse PostCallProcess(HttpResponseMessage response, bool ensureSuccess)

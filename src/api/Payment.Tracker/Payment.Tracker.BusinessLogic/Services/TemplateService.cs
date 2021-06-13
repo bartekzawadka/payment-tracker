@@ -6,6 +6,7 @@ using Payment.Tracker.BusinessLogic.Mappers;
 using Payment.Tracker.BusinessLogic.ServiceAction;
 using Payment.Tracker.DataLayer.Models;
 using Payment.Tracker.DataLayer.Repositories;
+using Payment.Tracker.DataLayer.Sys;
 
 namespace Payment.Tracker.BusinessLogic.Services
 {
@@ -20,8 +21,9 @@ namespace Payment.Tracker.BusinessLogic.Services
 
         public async Task<PaymentSetTemplateDto> GetTemplateAsync()
         {
-            List<PaymentPositionTemplateDto> templatePositions = await _positionTemplateRepo.GetAsAsync(
-                template => PaymentPositionTemplateMapper.ToDto(template));
+            List<PaymentPositionTemplateDto> templatePositions = await _positionTemplateRepo.GetAllAsAsync(
+                template => PaymentPositionTemplateMapper.ToDto(template),
+                new Filter<PaymentPositionTemplate>());
 
             return new PaymentSetTemplateDto
             {
@@ -31,11 +33,11 @@ namespace Payment.Tracker.BusinessLogic.Services
 
         public async Task<IServiceActionResult<PaymentSetTemplateDto>> UpsertTemplateAsync(PaymentSetTemplateDto dto)
         {
-            List<PaymentPositionTemplate> existingPositions = await _positionTemplateRepo.GetAllAsync();
-            if (existingPositions.Count > 0)
+            List<string> existingIds = await _positionTemplateRepo.GetAllAsAsync(
+                    t => t.Id, new Filter<PaymentPositionTemplate>());
+            if (existingIds.Count > 0)
             {
-                existingPositions.ForEach(x => _positionTemplateRepo.Delete(x));
-            }
+                await _positionTemplateRepo.DeleteAsync(existingIds); }
 
             var newPositionsMapped = dto
                 .Positions
@@ -43,8 +45,7 @@ namespace Payment.Tracker.BusinessLogic.Services
                 .ToList();
 
             await _positionTemplateRepo.InsertManyAsync(newPositionsMapped);
-            await _positionTemplateRepo.SaveChangesAsync();
-
+            
             return ServiceActionResult<PaymentSetTemplateDto>.GetCreated(
                 new PaymentSetTemplateDto
                 {

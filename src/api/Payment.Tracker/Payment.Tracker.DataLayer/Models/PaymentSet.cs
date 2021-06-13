@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Payment.Tracker.DataLayer.Models
 {
-    public class PaymentSet : Identifiable
+    public class PaymentSet : Document
     {
-        [Column(TypeName = "date")]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
+
         public  DateTime ForMonth { get; set; }
 
         public bool InvoicesAttached { get; set; }
         
-        public virtual ICollection<PaymentPosition> PaymentPositions { get; set; }
+        public ICollection<PaymentPosition> PaymentPositions { get; set; }
     }
 }

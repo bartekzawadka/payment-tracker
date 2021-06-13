@@ -12,7 +12,8 @@ namespace Payment.Tracker.BusinessLogic.Mappers
             {
                 Id = model.Id,
                 ForMonth = model.ForMonth,
-                InvoicesAttached = model.InvoicesAttached
+                InvoicesAttached = model.InvoicesAttached,
+                Positions = model.PaymentPositions.Select(PaymentPositionMapper.ToDto).ToList()
             };
 
         public static PaymentSetDto ToDto(PaymentSet model, IEnumerable<PaymentPosition> positions)

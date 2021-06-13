@@ -1,6 +1,6 @@
 namespace Payment.Tracker.DataLayer.Models
 {
-    public class PaymentPosition : Identifiable
+    public class PaymentPosition
     {
         public string Name { get; set; }
 
@@ -11,9 +11,5 @@ namespace Payment.Tracker.DataLayer.Models
         public decimal Price { get; set; }
 
         public bool Paid { get; set; }
-
-        public int PaymentSetId { get; set; }
-        
-        public virtual PaymentSet PaymentSet { get; set; }
     }
 }

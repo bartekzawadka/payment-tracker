@@ -37,11 +37,6 @@ namespace Payment.Tracker.Notifier
             {
                 connectionString = connectionStringVar;
             }
-            
-            services.AddDbContext<PaymentContext>((_, builder) =>
-            {
-                builder.UseMySql(connectionString, new MySqlServerVersion(Consts.DbServerVersion));
-            });
 
             services.AddQuartz(configurator =>
             {

@@ -7,87 +7,83 @@ using Payment.Tracker.BusinessLogic.Mappers;
 using Payment.Tracker.BusinessLogic.ServiceAction;
 using Payment.Tracker.DataLayer.Models;
 using Payment.Tracker.DataLayer.Repositories;
+using Payment.Tracker.DataLayer.Sys;
 
 namespace Payment.Tracker.BusinessLogic.Services
 {
     public class PaymentsService : IPaymentsService
     {
         private readonly IGenericRepository<PaymentSet> _paymentSetsRepository;
-        private readonly IGenericRepository<PaymentPosition> _paymentPositionRepository;
-
-        public PaymentsService(
-            IGenericRepository<PaymentSet> paymentSetsRepository,
-            IGenericRepository<PaymentPosition> paymentPositionRepository)
+        
+        public PaymentsService(IGenericRepository<PaymentSet> paymentSetsRepository)
         {
             _paymentSetsRepository = paymentSetsRepository;
-            _paymentPositionRepository = paymentPositionRepository;
         }
 
         public Task<List<PaymentSetListItemDto>> GetPaymentSetsListAsync() =>
-            _paymentSetsRepository.GetAsAsync(
+            _paymentSetsRepository.GetAllAsAsync(
                 x => new PaymentSetListItemDto
                 {
                     Id = x.Id,
                     ForMonth = x.ForMonth,
                     InvoicesAttached = x.InvoicesAttached
                 },
-                orderBy: x => x.OrderByDescending(t => t.ForMonth));
+                new Filter<PaymentSet>
+                {
+                    Sorting = new List<ColumnSort>
+                    {
+                        new()
+                        {
+                            ColumnName = nameof(PaymentSet.ForMonth),
+                            IsDescending = true
+                        }
+                    }
+                });
 
-        public async Task<IServiceActionResult<PaymentSetDto>> GetPaymentSetByIdAsync(int id)
+        public async Task<IServiceActionResult<PaymentSetDto>> GetPaymentSetByIdAsync(string id)
         {
-            if (!await _paymentSetsRepository.ExistAsync(x => x.Id == id))
+            if (!await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x => x.Id == id)))
             {
                 return ServiceActionResult<PaymentSetDto>.GetNotFound();
             }
 
-            List<PaymentPositionDto> positions = await _paymentPositionRepository.GetAsAsync(
-                position => PaymentPositionMapper.ToDto(position),
-                position => position.PaymentSetId == id);
+            var result = await _paymentSetsRepository.GetByIdAsAsync(
+                id,
+                position => PaymentSetMapper.ToDto(position));
 
-            PaymentSet model = await _paymentSetsRepository.GetByIdAsync(id);
-            PaymentSetDto dto = PaymentSetMapper.ToDto(model);
-
-            dto.Positions = positions;
-            return ServiceActionResult<PaymentSetDto>.GetSuccess(dto);
+            return ServiceActionResult<PaymentSetDto>.GetSuccess(result);
         }
 
         public async Task<IServiceActionResult<PaymentSetDto>> GetCurrentSetAsync()
         {
             var now = DateTime.Now;
-            if (!await _paymentSetsRepository.ExistAsync(x => x.ForMonth.Year == now.Year
-                                                              && x.ForMonth.Month == now.Month))
+            var startMonth = new DateTime(now.Year, now.Month, now.Day);
+            var endMonth = new DateTime(startMonth.Year, startMonth.Month + 1, 1);
+            var filter = new Filter<PaymentSet>(x => x.ForMonth >= startMonth && x.ForMonth < endMonth); 
+            if (!await _paymentSetsRepository.ExistsAsync(filter))
             {
                 return ServiceActionResult<PaymentSetDto>.GetSuccess(new PaymentSetDto());
             }
-            
-            PaymentSet paymentSet = await _paymentSetsRepository.GetOneAsync(set => set.ForMonth.Year == now.Year && set.ForMonth.Month == now.Month);
-            List<PaymentPositionDto> paymentPositions = await _paymentPositionRepository.GetAsAsync(
-                position => PaymentPositionMapper.ToDto(position),
-                position => position.PaymentSetId == paymentSet.Id
-            );
 
-            var dto = new PaymentSetDto
-            {
-                Id = paymentSet.Id,
-                Positions = paymentPositions,
-                ForMonth = paymentSet.ForMonth,
-                InvoicesAttached = paymentSet.InvoicesAttached
-            };
-            
+            var dto = await _paymentSetsRepository.GetOneAsAsync(
+                filter,
+                set => PaymentSetMapper.ToDto(set));
+
             return ServiceActionResult<PaymentSetDto>.GetSuccess(dto);
         }
 
         public async Task<IServiceActionResult<PaymentSetDto>> CreatePaymentSetAsync(PaymentSetDto dto)
         {
-            if (await _paymentSetsRepository.ExistAsync(x =>
-                x.ForMonth.Year == dto.ForMonth.Year && x.ForMonth.Month == dto.ForMonth.Month))
+            var endMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month + 1, 1);
+            if (await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x =>
+                x.ForMonth >= dto.ForMonth && x.ForMonth < endMonth)))
             {
                 return ServiceActionResult<PaymentSetDto>.GetDataError("Już istnieje set dla wybranego okresu");
             }
 
             List<PaymentPosition> positions = dto
                 .Positions
-                .Select(x => PaymentPositionMapper.ToModel(x))
+                .Select(PaymentPositionMapper.ToModel)
                 .ToList();
 
             var set = new PaymentSet
@@ -98,31 +94,28 @@ namespace Payment.Tracker.BusinessLogic.Services
             };
 
             await _paymentSetsRepository.InsertAsync(set);
-            await _paymentSetsRepository.SaveChangesAsync();
-
+            
             var result = PaymentSetMapper.ToDto(set, positions);
 
             return ServiceActionResult<PaymentSetDto>.GetCreated(result);
         }
 
-        public async Task<IServiceActionResult<PaymentSetDto>> UpdatePaymentSetAsync(int id, PaymentSetDto dto)
+        public async Task<IServiceActionResult<PaymentSetDto>> UpdatePaymentSetAsync(string id, PaymentSetDto dto)
         {
-            if (!await _paymentSetsRepository.ExistAsync(x => x.Id == id))
+            if (!await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x => x.Id == id)))
             {
                 return ServiceActionResult<PaymentSetDto>.GetNotFound($"Nie odnaleziono setu o ID {id}");
             }
 
-            if (await _paymentSetsRepository.ExistAsync(x =>
+            var endMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month + 1, dto.ForMonth.Day);
+            if (await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x =>
                 x.Id != id
-                && x.ForMonth.Year == dto.ForMonth.Year
-                && x.ForMonth.Month == dto.ForMonth.Month))
+                && x.ForMonth>= dto.ForMonth && x.ForMonth < endMonth)))
             {
-                return ServiceActionResult<PaymentSetDto>.GetDataError($"Już istnieje set dla daty {dto.ForMonth.ToString("yyyy-MM")}");
+                return ServiceActionResult<PaymentSetDto>.GetDataError($"Już istnieje set dla daty {dto.ForMonth:yyyy-MM}");
             }
 
-            var set = await _paymentSetsRepository.GetByIdWithIncludesAsync(
-                id,
-                paymentSet => paymentSet.PaymentPositions);
+            var set = await _paymentSetsRepository.GetByIdAsync(id);
 
             set.ForMonth = dto.ForMonth;
             set.InvoicesAttached = dto.InvoicesAttached;
@@ -131,23 +124,21 @@ namespace Payment.Tracker.BusinessLogic.Services
                 .Select(PaymentPositionMapper.ToModel)
                 .ToList();
 
-            await _paymentSetsRepository.SaveChangesAsync();
+            await _paymentSetsRepository.UpdateAsync(id, set);
 
             var result = PaymentSetMapper.ToDto(set, set.PaymentPositions);
 
             return ServiceActionResult<PaymentSetDto>.GetSuccess(result);
         }
 
-        public async Task<IServiceActionResult> DeleteAsync(int id)
+        public async Task<IServiceActionResult> DeleteAsync(string id)
         {
-            if (!await _paymentSetsRepository.ExistAsync(x => x.Id == id))
+            if (!await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x => x.Id == id)))
             {
                 return ServiceActionResult.GetNotFound($"Nie odnaleziono setu o ID {id}");
             }
 
-            _paymentSetsRepository.Delete(id);
-            await _paymentSetsRepository.SaveChangesAsync();
-
+            await _paymentSetsRepository.DeleteAsync(id);
             return ServiceActionResult.GetSuccess();
         }
     }

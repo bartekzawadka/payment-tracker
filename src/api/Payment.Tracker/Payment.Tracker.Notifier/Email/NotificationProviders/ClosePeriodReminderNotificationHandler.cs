@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Payment.Tracker.DataLayer.Models;
 using Payment.Tracker.DataLayer.Repositories;
+using Payment.Tracker.DataLayer.Sys;
 using Payment.Tracker.Notifier.Models;
 
 namespace Payment.Tracker.Notifier.Email.NotificationProviders
@@ -25,12 +26,13 @@ namespace Payment.Tracker.Notifier.Email.NotificationProviders
         public async Task HandleNotificationAsync()
         {
             var now = DateTime.Now;
-            var currentIds = await _paymentSetRepository.GetAsAsync(
-                set => set.Id,
-                set => (set.PaymentPositions.Any(x => !x.Paid)
-                        || !set.InvoicesAttached)
-                       && set.ForMonth.Year == now.Year
-                       && set.ForMonth.Month == now.Month);
+            var startMonth = new DateTime(now.Year, now.Month, now.Day);
+            var endMonth = new DateTime(now.Year, now.Month + 1, now.Day);
+            var currentIds = await _paymentSetRepository.GetAllAsAsync(set => set.Id,
+                new Filter<PaymentSet>(set => (set.PaymentPositions.Any(x => !x.Paid)
+                                               || !set.InvoicesAttached)
+                                              && set.ForMonth >= startMonth
+                                              && set.ForMonth < endMonth));
 
             if (currentIds.Count <= 0)
             {
