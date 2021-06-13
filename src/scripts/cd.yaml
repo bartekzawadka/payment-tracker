@@ -6,7 +6,10 @@ resources:
   - pipeline: build   # Name of the pipeline resource
     source: Build # Name of the pipeline referenced by the pipeline resource
     project: Payment Tracker # Required only if the source pipeline is in another project
-    trigger: true #
+    trigger:
+      branches:
+        include:
+          - refs/heads/main
 
 jobs:
     - job: Release
