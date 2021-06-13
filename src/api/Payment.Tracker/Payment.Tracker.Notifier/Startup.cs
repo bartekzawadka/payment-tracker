@@ -1,7 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,6 +36,9 @@ namespace Payment.Tracker.Notifier
             {
                 connectionString = connectionStringVar;
             }
+            
+            var context = new PaymentContext(connectionString);
+            services.AddSingleton(context);
 
             services.AddQuartz(configurator =>
             {
@@ -70,7 +72,7 @@ namespace Payment.Tracker.Notifier
         
         private static void RegisterRepositories(IServiceCollection services)
         {
-            services.AddScoped<IGenericRepository<PaymentSet>, GenericRepository<PaymentSet>>();
+            services.AddSingleton<IGenericRepository<PaymentSet>, GenericRepository<PaymentSet>>();
         }
 
         private static void RegisterServices(IServiceCollection services)
