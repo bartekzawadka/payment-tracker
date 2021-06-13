@@ -57,7 +57,7 @@ namespace Payment.Tracker.BusinessLogic.Services
         public async Task<IServiceActionResult<PaymentSetDto>> GetCurrentSetAsync()
         {
             var now = DateTime.Now;
-            var startMonth = new DateTime(now.Year, now.Month, now.Day);
+            var startMonth = new DateTime(now.Year, now.Month, 1);
             var endMonth = new DateTime(startMonth.Year, startMonth.Month + 1, 1);
             var filter = new Filter<PaymentSet>(x => x.ForMonth >= startMonth && x.ForMonth < endMonth); 
             if (!await _paymentSetsRepository.ExistsAsync(filter))

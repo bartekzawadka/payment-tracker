@@ -25,8 +25,8 @@ namespace Payment.Tracker.Notifier.Email.NotificationProviders
         public async Task HandleNotificationAsync()
         {
             var now = DateTime.Now;
-            var startMonth = new DateTime(now.Year, now.Month, now.Day);
-            var endMonth = new DateTime(now.Year, now.Month + 1, now.Day);
+            var startMonth = new DateTime(now.Year, now.Month, 1);
+            var endMonth = new DateTime(now.Year, now.Month + 1, 1);
 
             if (await _paymentSetRepository.ExistsAsync(new Filter<PaymentSet>(
                 x => x.ForMonth >= startMonth && x.ForMonth < endMonth)))

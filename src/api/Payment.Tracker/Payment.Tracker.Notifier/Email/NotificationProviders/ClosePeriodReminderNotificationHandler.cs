@@ -26,8 +26,8 @@ namespace Payment.Tracker.Notifier.Email.NotificationProviders
         public async Task HandleNotificationAsync()
         {
             var now = DateTime.Now;
-            var startMonth = new DateTime(now.Year, now.Month, now.Day);
-            var endMonth = new DateTime(now.Year, now.Month + 1, now.Day);
+            var startMonth = new DateTime(now.Year, now.Month, 1);
+            var endMonth = new DateTime(now.Year, now.Month + 1, 1);
             var currentIds = await _paymentSetRepository.GetAllAsAsync(set => set.Id,
                 new Filter<PaymentSet>(set => (set.PaymentPositions.Any(x => !x.Paid)
                                                || !set.InvoicesAttached)

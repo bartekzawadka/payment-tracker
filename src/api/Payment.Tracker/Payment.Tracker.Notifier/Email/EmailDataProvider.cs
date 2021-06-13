@@ -40,7 +40,7 @@ namespace Payment.Tracker.Notifier.Email
                                     $"Kliknij tu: {appEndpoint}/payment-set aby utworzyć nowy set."
                     };
                 case NotificationType.ClosePeriodReminder:
-                    var text = "Zakończ wszystkie płatności i pamiętaj o zaksięgowaniu faktur za bierzący miesiąc!";
+                    var text = "Zakończ wszystkie płatności i pamiętaj o zaksięgowaniu faktur za bieżący miesiąc!";
                     return new EmailContent
                     {
                         HtmlText = $"{text}\r\nBieżące płatności:" +
