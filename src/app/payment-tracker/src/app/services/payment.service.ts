@@ -18,7 +18,7 @@ export class PaymentService extends ApiService {
     return this.get<PaymentSetsListItem[]>('/list');
   }
 
-  getPaymentSetById(id: number): Observable<PaymentSet> {
+  getPaymentSetById(id: string): Observable<PaymentSet> {
     return this.get<PaymentSet>(`/${id}`);
   }
 

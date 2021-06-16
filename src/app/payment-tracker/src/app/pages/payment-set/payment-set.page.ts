@@ -51,14 +51,14 @@ export class PaymentSetPage extends PageBase implements OnInit {
     try {
       if (id === 'current') {
         const model = await this.callWithLoader(() => this.paymentService.getCurrentPaymentSet());
-        if (!model || model.id <= 0) {
+        if (!model || !model.id) {
           await this.router.navigate(['/payment-sets']);
           return;
         }
 
         this.model = model;
       } else {
-        this.model = await this.callWithLoader(() => this.paymentService.getPaymentSetById(+id));
+        this.model = await this.callWithLoader(() => this.paymentService.getPaymentSetById(id));
       }
     } catch (e) {
       await this.showError(e, 'Błąd ładowania setu');
