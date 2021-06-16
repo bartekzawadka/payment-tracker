@@ -4,8 +4,8 @@
       <ion-menu-button></ion-menu-button>
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-    <ion-title *ngIf="model.id <= 0">Nowa płatność</ion-title>
-    <ion-title *ngIf="model.id > 0">Za miesiąc {{model.forMonth | date:'yyyy-MM'}}</ion-title>
+    <ion-title *ngIf="!model.id">Nowa płatność</ion-title>
+    <ion-title *ngIf="model.id && model.id !== ''">Za miesiąc {{model.forMonth | date:'yyyy-MM'}}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="save()" color="primary" [disabled]="!canSave()">
         <ion-icon icon="save-outline" slot="start"></ion-icon>
