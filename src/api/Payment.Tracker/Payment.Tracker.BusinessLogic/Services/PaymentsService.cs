@@ -88,7 +88,7 @@ namespace Payment.Tracker.BusinessLogic.Services
 
             var set = new PaymentSet
             {
-                ForMonth = dto.ForMonth,
+                ForMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month, 1),
                 InvoicesAttached = dto.InvoicesAttached,
                 PaymentPositions = positions
             };
