@@ -74,9 +74,10 @@ namespace Payment.Tracker.BusinessLogic.Services
 
         public async Task<IServiceActionResult<PaymentSetDto>> CreatePaymentSetAsync(PaymentSetDto dto)
         {
+            var startMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month, 1);
             var endMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month + 1, 1);
             if (await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x =>
-                x.ForMonth >= dto.ForMonth && x.ForMonth < endMonth)))
+                x.ForMonth >= startMonth && x.ForMonth < endMonth)))
             {
                 return ServiceActionResult<PaymentSetDto>.GetDataError("Już istnieje set dla wybranego okresu");
             }
@@ -88,7 +89,7 @@ namespace Payment.Tracker.BusinessLogic.Services
 
             var set = new PaymentSet
             {
-                ForMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month, 1),
+                ForMonth = startMonth,
                 InvoicesAttached = dto.InvoicesAttached,
                 PaymentPositions = positions
             };
