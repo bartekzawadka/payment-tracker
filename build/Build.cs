@@ -1,11 +1,5 @@
-using System;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Nuke.Common;
-using Nuke.Common.CI;
-using Nuke.Common.Execution;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
@@ -13,9 +7,7 @@ using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.Npm;
 using Nuke.Common.Tools.NuGet;
 using Nuke.Common.Utilities.Collections;
-using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.FileSystemTasks;
-using static Nuke.Common.IO.PathConstruction;
 
 class Build : NukeBuild
 {
@@ -76,6 +68,27 @@ class Build : NukeBuild
         .DependsOn(Restore)
         .Executes(() =>
         {
+            DotNetTasks.DotNetBuild(settings =>
+                settings
+                    .SetProjectFile(Solution.GetProject("Payment.Tracker.Api")?.Path)
+                    .SetConfiguration(Configuration)
+                    .SetNoRestore(true)
+                    .SetVerbosity(DotNetVerbosity.Minimal));
+
+            DotNetTasks.DotNetBuild(settings =>
+                settings
+                    .SetProjectFile(Solution.GetProject("Payment.Tracker.Notifier")?.Path)
+                    .SetConfiguration(Configuration)
+                    .SetNoRestore(true)
+                    .SetVerbosity(DotNetVerbosity.Minimal));
+            
+            DotNetTasks.DotNetBuild(settings =>
+                settings
+                    .SetProjectFile(Solution.GetProject("Payment.Tracker.IntegrationTests")?.Path)
+                    .SetConfiguration(Configuration)
+                    .SetNoRestore(true)
+                    .SetVerbosity(DotNetVerbosity.Minimal));
+            
             var command = "run ng run app:build";
             if (Equals(Configuration, Configuration.Release))
             {
@@ -83,18 +96,6 @@ class Build : NukeBuild
             }
             
             NpmTasks.Npm(command, AppDirectory);
-
-            DotNetTasks.DotNetBuild(settings =>
-                settings
-                    .SetProjectFile(Solution.GetProject("Payment.Tracker.Api")?.Path)
-                    .SetConfiguration(Configuration)
-                    .SetVerbosity(DotNetVerbosity.Minimal));
-
-            DotNetTasks.DotNetBuild(settings =>
-                settings
-                    .SetProjectFile(Solution.GetProject("Payment.Tracker.Notifier")?.Path)
-                    .SetConfiguration(Configuration)
-                    .SetVerbosity(DotNetVerbosity.Minimal));
         });
 
     Target Test => _ => _
