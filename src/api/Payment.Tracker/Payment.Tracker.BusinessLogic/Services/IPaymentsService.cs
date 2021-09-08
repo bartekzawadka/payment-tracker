@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Baz.Service.Action.Core;
 using Payment.Tracker.BusinessLogic.Dto.Payment;
-using Payment.Tracker.BusinessLogic.ServiceAction;
 
 namespace Payment.Tracker.BusinessLogic.Services
 {

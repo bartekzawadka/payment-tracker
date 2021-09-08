@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Baz.Service.Action.Core;
 using Payment.Tracker.BusinessLogic.Configuration;
-using Payment.Tracker.BusinessLogic.ServiceAction;
 using Payment.Tracker.BusinessLogic.Services;
 using Payment.Tracker.DataLayer.Models;
 using Payment.Tracker.DataLayer.Repositories;
@@ -39,9 +41,10 @@ namespace Payment.Tracker.BusinessLogic.Seeds
             };
 
             IServiceActionResult result = _authenticationService.CreatePasswordHash(user, _securitySettings.AdminPassword);
-            if (!result.IsSuccess)
+            var errors = result.ErrorMessages?.ToList() ?? new List<string>();
+            if (errors.Any())
             {
-                throw new Exception($"Błąd seedowania bazy danych: {string.Join(". ", result.ErrorMessages)}");
+                throw new Exception($"Błąd seedowania bazy danych: {string.Join(". ", errors)}");
             }
 
             await _usersRepository.InsertAsync(user);

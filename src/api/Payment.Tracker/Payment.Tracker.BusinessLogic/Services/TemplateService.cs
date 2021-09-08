@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Baz.Service.Action.Core;
 using Payment.Tracker.BusinessLogic.Dto.Template;
 using Payment.Tracker.BusinessLogic.Mappers;
-using Payment.Tracker.BusinessLogic.ServiceAction;
 using Payment.Tracker.DataLayer.Models;
 using Payment.Tracker.DataLayer.Repositories;
 using Payment.Tracker.DataLayer.Sys;
@@ -46,7 +46,8 @@ namespace Payment.Tracker.BusinessLogic.Services
 
             await _positionTemplateRepo.InsertManyAsync(newPositionsMapped);
             
-            return ServiceActionResult<PaymentSetTemplateDto>.GetCreated(
+            return ServiceActionResult<PaymentSetTemplateDto>.Get(
+                ServiceActionResponseNames.Created,
                 new PaymentSetTemplateDto
                 {
                     Positions = newPositionsMapped.Select(PaymentPositionTemplateMapper.ToDto).ToList()

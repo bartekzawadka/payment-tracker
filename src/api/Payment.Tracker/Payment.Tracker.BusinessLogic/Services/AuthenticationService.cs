@@ -5,10 +5,10 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Baz.Service.Action.Core;
 using Microsoft.IdentityModel.Tokens;
 using Payment.Tracker.BusinessLogic.Configuration;
 using Payment.Tracker.BusinessLogic.Dto.Auth;
-using Payment.Tracker.BusinessLogic.ServiceAction;
 using Payment.Tracker.DataLayer.Models;
 using Payment.Tracker.DataLayer.Repositories;
 using Payment.Tracker.DataLayer.Sys;
@@ -31,11 +31,15 @@ namespace Payment.Tracker.BusinessLogic.Services
             User user = await _usersRepository.GetOneAsync(new Filter<User>(u => u.UserName == "admin"));
             if (user == null)
             {
-                return ServiceActionResult<TokenDto>.GetUnauthorized("Nie odnaleziono użytkownika administratora");
+                return ServiceActionResult<TokenDto>.Get(
+                    ServiceActionResponseNames.UnauthorizedAccess,
+                    "Nie odnaleziono użytkownika administratora");
             }
 
             return !VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt)
-                ? ServiceActionResult<TokenDto>.GetUnauthorized("Niepoprawne hasło")
+                ? ServiceActionResult<TokenDto>.Get(
+                    ServiceActionResponseNames.UnauthorizedAccess,
+                    "Niepoprawne hasło")
                 : ServiceActionResult<TokenDto>.GetSuccess(GetApiToken(user));
         }
 
@@ -43,18 +47,20 @@ namespace Payment.Tracker.BusinessLogic.Services
         {
             if (string.IsNullOrWhiteSpace(password))
             {
-                return ServiceActionResult.GetDataError("Hasło nie może być puste");
+                return ServiceActionResult.Get(
+                    ServiceActionResponseNames.InvalidDataOrOperation,
+                    "Hasło nie może być puste");
             }
 
             if (user == null)
             {
-                return ServiceActionResult.GetSuccess();
+                return ServiceActionResult.Get(ServiceActionResponseNames.Success);
             }
 
             using var hmac = new HMACSHA512();
             user.PasswordSalt = hmac.Key;
             user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return ServiceActionResult.GetSuccess();
+            return ServiceActionResult.Get(ServiceActionResponseNames.Success);
         }
 
         private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)

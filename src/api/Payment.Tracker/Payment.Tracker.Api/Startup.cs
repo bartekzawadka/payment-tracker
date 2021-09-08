@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Baz.Service.Action.AspNetCore.Extensions;
+using Baz.Service.Action.Core;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -11,7 +13,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using Payment.Tracker.Api.Extensions;
-using Payment.Tracker.Api.Filters;
 using Payment.Tracker.BusinessLogic.Configuration;
 using Payment.Tracker.BusinessLogic.Seeds;
 using Payment.Tracker.BusinessLogic.Services;
@@ -57,8 +58,11 @@ namespace Payment.Tracker.Api
 
             services.AddSingleton<ISecuritySettings>(securitySettings);
             ConfigureAuth(services, securitySettings);
-            
-            services.AddControllers(options => { options.Filters.Add<ServiceActionFilter>(); });
+
+            var builder = new ServiceActionResponseMapBuilder();
+            services.AddControllers(options => { options
+                .Filters
+                .AddServiceActionFilter(builder.Build());});
 
             string connectionString = Configuration.GetConnectionString(Consts.DatabaseName);
             var connectionStringVar = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");

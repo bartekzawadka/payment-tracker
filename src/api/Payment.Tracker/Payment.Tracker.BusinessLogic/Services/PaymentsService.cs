@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Baz.Service.Action.Core;
 using Payment.Tracker.BusinessLogic.Dto.Payment;
 using Payment.Tracker.BusinessLogic.Mappers;
-using Payment.Tracker.BusinessLogic.ServiceAction;
 using Payment.Tracker.DataLayer.Models;
 using Payment.Tracker.DataLayer.Repositories;
 using Payment.Tracker.DataLayer.Sys;
@@ -44,7 +44,7 @@ namespace Payment.Tracker.BusinessLogic.Services
         {
             if (!await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x => x.Id == id)))
             {
-                return ServiceActionResult<PaymentSetDto>.GetNotFound();
+                return ServiceActionResult<PaymentSetDto>.Get(ServiceActionResponseNames.ObjectNotFound);
             }
 
             var result = await _paymentSetsRepository.GetByIdAsAsync(
@@ -79,7 +79,9 @@ namespace Payment.Tracker.BusinessLogic.Services
             if (await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x =>
                 x.ForMonth >= startMonth && x.ForMonth < endMonth)))
             {
-                return ServiceActionResult<PaymentSetDto>.GetDataError("Już istnieje set dla wybranego okresu");
+                return ServiceActionResult<PaymentSetDto>.Get(
+                    ServiceActionResponseNames.InvalidDataOrOperation,
+                    "Już istnieje set dla wybranego okresu");
             }
 
             List<PaymentPosition> positions = dto
@@ -98,14 +100,16 @@ namespace Payment.Tracker.BusinessLogic.Services
             
             var result = PaymentSetMapper.ToDto(set, positions);
 
-            return ServiceActionResult<PaymentSetDto>.GetCreated(result);
+            return ServiceActionResult<PaymentSetDto>.Get(ServiceActionResponseNames.Created, result);
         }
 
         public async Task<IServiceActionResult<PaymentSetDto>> UpdatePaymentSetAsync(string id, PaymentSetDto dto)
         {
             if (!await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x => x.Id == id)))
             {
-                return ServiceActionResult<PaymentSetDto>.GetNotFound($"Nie odnaleziono setu o ID {id}");
+                return ServiceActionResult<PaymentSetDto>.Get(
+                    ServiceActionResponseNames.ObjectNotFound,
+                    $"Nie odnaleziono setu o ID {id}");
             }
 
             var endMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month + 1, dto.ForMonth.Day);
@@ -113,7 +117,9 @@ namespace Payment.Tracker.BusinessLogic.Services
                 x.Id != id
                 && x.ForMonth>= dto.ForMonth && x.ForMonth < endMonth)))
             {
-                return ServiceActionResult<PaymentSetDto>.GetDataError($"Już istnieje set dla daty {dto.ForMonth:yyyy-MM}");
+                return ServiceActionResult<PaymentSetDto>.Get(
+                    ServiceActionResponseNames.InvalidDataOrOperation,
+                    $"Już istnieje set dla daty {dto.ForMonth:yyyy-MM}");
             }
 
             var set = await _paymentSetsRepository.GetByIdAsync(id);
@@ -136,11 +142,13 @@ namespace Payment.Tracker.BusinessLogic.Services
         {
             if (!await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x => x.Id == id)))
             {
-                return ServiceActionResult.GetNotFound($"Nie odnaleziono setu o ID {id}");
+                return ServiceActionResult.Get(
+                    ServiceActionResponseNames.ObjectNotFound,
+                    $"Nie odnaleziono setu o ID {id}");
             }
 
             await _paymentSetsRepository.DeleteAsync(id);
-            return ServiceActionResult.GetSuccess();
+            return ServiceActionResult.Get(ServiceActionResponseNames.Success);
         }
     }
 }

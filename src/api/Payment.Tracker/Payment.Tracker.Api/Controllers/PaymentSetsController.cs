@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Baz.Service.Action.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Payment.Tracker.BusinessLogic.Dto.Payment;
-using Payment.Tracker.BusinessLogic.ServiceAction;
 using Payment.Tracker.BusinessLogic.Services;
 
 namespace Payment.Tracker.Api.Controllers
