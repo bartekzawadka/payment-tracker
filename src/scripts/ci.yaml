@@ -32,6 +32,8 @@ jobs:
         inputs:
           packageType: 'sdk'
           version: '5.0.x'           
+      - task: NuGetAuthenticate@0
+        displayName: 'NuGet Authenticate'
 
       - script: './build.sh --target compile --configuration $(BuildConfiguration) --host AzurePipelines'
         displayName: 'Run NUKE build'
