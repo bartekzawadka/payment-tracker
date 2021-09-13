@@ -11,11 +11,11 @@ namespace Payment.Tracker.DataLayer.Repositories
 {
     public class GenericRepository<TCollection> : IGenericRepository<TCollection> where TCollection : Document
     {
-        private IMongoCollection<TCollection> Collection { get; }
+        protected IMongoCollection<TCollection> Collection { get; }
         
         public GenericRepository(PaymentContext context)
         {
-            string name = Regex.Replace(typeof(TCollection).Name, "(\\B[A-Z])", ".$1").ToLower();
+            var name = Regex.Replace(typeof(TCollection).Name, "(\\B[A-Z])", ".$1").ToLower();
             Collection = context.Database.GetCollection<TCollection>(name);
         }
         
@@ -24,12 +24,9 @@ namespace Payment.Tracker.DataLayer.Repositories
 
         public async Task<long> CountAsync<TFilter>(TFilter filter) where TFilter : Filter<TCollection>, new()
         {
-            if (filter == null)
-            {
-                filter = new TFilter();
-            }
+            filter ??= new TFilter();
             
-            long count = await Collection.CountDocumentsAsync(filter.FilterDefinition);
+            var count = await Collection.CountDocumentsAsync(filter.FilterDefinition);
             return count;
         }
 
@@ -47,17 +44,14 @@ namespace Payment.Tracker.DataLayer.Repositories
             TFilter filter = null)
             where TFilter : Filter<TCollection>, new()
         {
-            if (filter == null)
-            {
-                filter = new TFilter();
-            }
+            filter ??= new TFilter();
 
-            IFindFluent<TCollection, TCollection> query = Collection.Find(filter.FilterDefinition);
+            var query = Collection.Find(filter.FilterDefinition);
 
             if (filter.Sorting?.Count > 0)
             {
                 var builder = new SortDefinitionBuilder<TCollection>();
-                foreach (ColumnSort columnSort in filter.Sorting)
+                foreach (var columnSort in filter.Sorting)
                 {
                     var stringFieldDefinition = new StringFieldDefinition<TCollection>(columnSort.ColumnName);
                     Func<SortDefinition<TCollection>> sortDefinitionFunc;
@@ -74,13 +68,13 @@ namespace Payment.Tracker.DataLayer.Repositories
                 }
             }
 
-            IFindFluent<TCollection, TNew> resultQuery = query.Project(selectClause);
+            var resultQuery = query.Project(selectClause);
             return resultQuery;
         }
 
         public async Task<TCollection> GetByIdAsync(string id)
         {
-            IAsyncCursor<TCollection> result = await Collection
+            var result = await Collection
                 .FindAsync(document => string.Equals(document.Id, id));
             return await result.SingleOrDefaultAsync();
         }
@@ -93,7 +87,7 @@ namespace Payment.Tracker.DataLayer.Repositories
 
         public async Task<TCollection> GetOneAsync<TFilter>(TFilter filter) where TFilter : Filter<TCollection>, new()
         {
-            IAsyncCursor<TCollection> result = await Collection.FindAsync(filter.FilterDefinition);
+            var result = await Collection.FindAsync(filter.FilterDefinition);
             return await result.SingleOrDefaultAsync();
         }
 
@@ -116,8 +110,7 @@ namespace Payment.Tracker.DataLayer.Repositories
 
         public Task DeleteAsync(IEnumerable<string> ids)
         {
-            FilterDefinition<TCollection> filter = new FilterDefinitionBuilder<TCollection>()
-                .In(document => document.Id, ids);
+            var filter = new FilterDefinitionBuilder<TCollection>().In(document => document.Id, ids);
             return Collection.DeleteManyAsync(filter);
         }
     }

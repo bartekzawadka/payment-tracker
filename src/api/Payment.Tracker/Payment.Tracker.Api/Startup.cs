@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using Baz.Service.Action.AspNetCore.Extensions;
 using Baz.Service.Action.Core;
@@ -52,7 +51,7 @@ namespace Payment.Tracker.Api
                         configuration.LocalizationEnabled = true;
                     });
             
-            IConfigurationSection securityConfigSection = Configuration.GetSection(nameof(SecuritySettings));
+            var securityConfigSection = Configuration.GetSection(nameof(SecuritySettings));
             var securitySettings = securityConfigSection.Get<SecuritySettings>();
             ApplyEnvironmentVariables(securitySettings);
 
@@ -64,7 +63,7 @@ namespace Payment.Tracker.Api
                 .Filters
                 .AddServiceActionFilter(builder.Build());});
 
-            string connectionString = Configuration.GetConnectionString(Consts.DatabaseName);
+            var connectionString = Configuration.GetConnectionString(Consts.DatabaseName);
             var connectionStringVar = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
             if (!string.IsNullOrWhiteSpace(connectionStringVar))
             {
@@ -112,6 +111,7 @@ namespace Payment.Tracker.Api
             services.AddSingleton<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ITemplateService, TemplateService>();
             services.AddScoped<IPaymentsService, PaymentsService>();
+            services.AddScoped<IStatisticsService, StatisticsService>();
         }
         
         private static void RegisterSeeds(IServiceCollection services)
@@ -129,7 +129,7 @@ namespace Payment.Tracker.Api
                 })
                 .AddJwtBearer(options =>
                 {
-                    byte[] secretBytes = Encoding.ASCII.GetBytes(securitySettings.TokenSecret);
+                    var secretBytes = Encoding.ASCII.GetBytes(securitySettings.TokenSecret);
                     options.RequireHttpsMetadata = false;
                     options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -169,8 +169,8 @@ namespace Payment.Tracker.Api
         
         private static void SeedDatabase(IApplicationBuilder app)
         {
-            IEnumerable<ISeed> seeders = app.ApplicationServices.GetServices<ISeed>();
-            foreach (ISeed seeder in seeders)
+            var seeders = app.ApplicationServices.GetServices<ISeed>();
+            foreach (var seeder in seeders)
             {
                 seeder.SeedAsync().GetAwaiter().GetResult();
             }

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Baz.Service.Action.Core;
@@ -21,7 +20,7 @@ namespace Payment.Tracker.BusinessLogic.Services
 
         public async Task<PaymentSetTemplateDto> GetTemplateAsync()
         {
-            List<PaymentPositionTemplateDto> templatePositions = await _positionTemplateRepo.GetAllAsAsync(
+            var templatePositions = await _positionTemplateRepo.GetAllAsAsync(
                 template => PaymentPositionTemplateMapper.ToDto(template),
                 new Filter<PaymentPositionTemplate>());
 
@@ -33,11 +32,12 @@ namespace Payment.Tracker.BusinessLogic.Services
 
         public async Task<IServiceActionResult<PaymentSetTemplateDto>> UpsertTemplateAsync(PaymentSetTemplateDto dto)
         {
-            List<string> existingIds = await _positionTemplateRepo.GetAllAsAsync(
-                    t => t.Id, new Filter<PaymentPositionTemplate>());
+            var existingIds = await _positionTemplateRepo.GetAllAsAsync(
+                t => t.Id, new Filter<PaymentPositionTemplate>());
             if (existingIds.Count > 0)
             {
-                await _positionTemplateRepo.DeleteAsync(existingIds); }
+                await _positionTemplateRepo.DeleteAsync(existingIds);
+            }
 
             var newPositionsMapped = dto
                 .Positions
@@ -45,7 +45,7 @@ namespace Payment.Tracker.BusinessLogic.Services
                 .ToList();
 
             await _positionTemplateRepo.InsertManyAsync(newPositionsMapped);
-            
+
             return ServiceActionResult<PaymentSetTemplateDto>.Get(
                 ServiceActionResponseNames.Created,
                 new PaymentSetTemplateDto
