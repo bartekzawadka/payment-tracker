@@ -1,11 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {PageBase} from '../page-base';
-import {AlertController, LoadingController} from '@ionic/angular';
+import {AlertController, LoadingController, ModalController} from '@ionic/angular';
 import {Router} from '@angular/router';
 import {StatisticsService} from '../../services/statistics.service';
 import {KeyValue} from '@angular/common';
 import {Chart, registerables} from 'chart.js';
 import Statistics from '../../models/statistics/statistics';
+import {StatisticsFilterPage} from './modal/statistics-filter/statistics-filter.page';
 
 @Component({
   selector: 'app-statistics',
@@ -15,23 +16,25 @@ import Statistics from '../../models/statistics/statistics';
 export class StatisticsPage extends PageBase implements OnInit {
   @ViewChild('chartCanvas') chartCanvas;
   statisticTypes: KeyValue<number, string>[] = [];
-  statisticType = 0;
+  statisticType = 1;
   statisticsData: Statistics<any> = undefined;
   notBefore?: Date = undefined;
   notAfter?: Date = undefined;
   lines: any;
+  chartType = 'bar';
 
   constructor(protected loadingController: LoadingController,
               protected alertController: AlertController,
               private statisticsService: StatisticsService,
+              public modalController: ModalController,
               private router: Router) {
     super(loadingController, alertController);
     Chart.register(...registerables);
   }
 
-  private static getHslDataSetColor(){
+  private static getHslDataSetColor() {
     const hue = Math.floor(Math.random() * 360);
-    return  'hsl(' + hue + ', 100%, 80%)';
+    return 'hsl(' + hue + ', 100%, 80%)';
   }
 
   ngOnInit() {
@@ -39,6 +42,7 @@ export class StatisticsPage extends PageBase implements OnInit {
 
   async ionViewDidEnter() {
     await this.loadStatisticTypes();
+    await this.createChart();
   }
 
   async loadStatisticTypes() {
@@ -49,13 +53,9 @@ export class StatisticsPage extends PageBase implements OnInit {
     }
   }
 
-  async onStatisticTypeChange() {
-    await this.createChart();
-  }
-
   public async createChart() {
     try {
-      if(this.lines){
+      if (this.lines) {
         this.lines.destroy();
       }
 
@@ -70,7 +70,7 @@ export class StatisticsPage extends PageBase implements OnInit {
       }
 
       this.lines = new Chart(this.chartCanvas.nativeElement, {
-        type: 'bar',
+        type: this.chartType === 'line' ? 'line' : 'bar',
         data: this.statisticsData.data
       });
     } catch (e) {
@@ -78,21 +78,42 @@ export class StatisticsPage extends PageBase implements OnInit {
     }
   }
 
+  async openFilters() {
+    const modal = await this.modalController.create({
+      component: StatisticsFilterPage,
+      componentProps: {
+        statisticTypes: this.statisticTypes,
+        statisticType: this.statisticType,
+        chartType: this.chartType,
+        notBefore: this.notBefore,
+        notAfter: this.notAfter
+      }
+    });
+    await modal.present();
+    const result = await modal.onWillDismiss();
+    if(result.data.dismissed){
+      return;
+    }
+
+    this.chartType = result.data.chartType;
+    this.statisticType = result.data.statisticType;
+    this.notBefore = result.data.notBefore;
+    this.notAfter = result.data.notAfter;
+    await this.createChart();
+  }
+
   private async loadStatisticsData() {
     let notBefore;
     let notAfter;
-    if(this.notBefore){
+    if (this.notBefore) {
       const tmp = new Date(this.notBefore);
       notBefore = new Date(tmp.getFullYear(), tmp.getMonth());
     }
 
-    if(this.notAfter){
+    if (this.notAfter) {
       const tmp = new Date(this.notAfter);
       notAfter = new Date(tmp.getFullYear(), tmp.getMonth());
     }
-
-    console.log(notBefore);
-    console.log(notAfter);
 
     this.statisticsData = await this.callWithLoader(() => this
       .statisticsService

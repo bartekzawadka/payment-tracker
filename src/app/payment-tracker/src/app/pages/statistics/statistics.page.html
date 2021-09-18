@@ -4,6 +4,12 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Statystyki</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="primary" (click)="openFilters()">
+        <ion-icon icon="filter-outline" slot="start"></ion-icon>
+        Filtry
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -11,33 +17,14 @@
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Statystyki</ion-title>
+      <ion-buttons slot="end">
+        <ion-button color="primary" (click)="openFilters()">
+          <ion-icon icon="filter-outline" slot="start"></ion-icon>
+          Filtry
+        </ion-button>
+      </ion-buttons>
     </ion-toolbar>
   </ion-header>
-
-  <div class="container">
-    <ion-item class="container-item">
-      <ion-label>Typ statystyki</ion-label>
-      <ion-select placeholder="Wybierz" [cancelText]="'Anuluj'" [(ngModel)]="statisticType"
-                  (ionChange)="onStatisticTypeChange()">
-        <ion-select-option *ngFor="let type of this.statisticTypes"
-                           [value]="type.key">{{type.value}}</ion-select-option>
-      </ion-select>
-    </ion-item>
-  </div>
-  <div class="container">
-    <ion-item class="container-item">
-      <ion-label>Od</ion-label>
-      <ion-datetime display-format="YYYY-MM" [(ngModel)]="notBefore"></ion-datetime>
-    </ion-item>
-    <ion-item class="container-item">
-      <ion-label>Do</ion-label>
-      <ion-datetime display-format="YYYY-MM" [(ngModel)]="notAfter"></ion-datetime>
-    </ion-item>
-    <ion-button (click)="createChart()" color="primary">
-      <ion-icon icon="refresh-outline" slot="start"></ion-icon>
-      Odśwież
-    </ion-button>
-  </div>
 
   <div [hidden]="!statisticsData">
     <ion-card>

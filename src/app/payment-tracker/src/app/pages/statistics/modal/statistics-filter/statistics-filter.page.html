@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Filtry</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">
+        <ion-icon icon="close-outline" slot="start"></ion-icon>
+        Anuluj
+      </ion-button>
+      <ion-button (click)="clear()">
+        <ion-icon icon="trash-outline" slot="start"></ion-icon>
+        Wyczyść
+      </ion-button>
+      <ion-button (click)="applyFilter()">
+        <ion-icon icon="checkmark-outline" slot="start"></ion-icon>
+        OK
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item>
+    <ion-label>Typ statystyki</ion-label>
+    <ion-select placeholder="Wybierz" [cancelText]="'Anuluj'" [(ngModel)]="statisticsFilter.statisticType">
+      <ion-select-option *ngFor="let type of this.statisticTypes"
+                         [value]="type.key">{{type.value}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label>Typ wykresu</ion-label>
+    <ion-select placeholder="Wybierz" [cancelText]="'Anuluj'" [(ngModel)]="statisticsFilter.chartType">
+      <ion-select-option *ngFor="let type of this.chartTypes"
+                         [value]="type.key">{{type.value}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label>Zakres od</ion-label>
+    <ion-datetime display-format="YYYY-MM" [(ngModel)]="statisticsFilter.notBefore"></ion-datetime>
+  </ion-item>
+  <ion-item>
+    <ion-label>Zakres do</ion-label>
+    <ion-datetime display-format="YYYY-MM" [(ngModel)]="statisticsFilter.notAfter"></ion-datetime>
+  </ion-item>
+</ion-content>

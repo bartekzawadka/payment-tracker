@@ -77,7 +77,6 @@ export class PaymentSetPage extends PageBase implements OnInit {
       });
 
       this.model = set;
-      console.log(this.model);
     } catch (e) {
       await this.showError(e, 'Błąd odczytu szablonu');
     }

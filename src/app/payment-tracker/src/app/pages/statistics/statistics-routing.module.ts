@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: StatisticsPage
+  },
+  {
+    path: 'statistics-filter',
+    loadChildren: () => import('./modal/statistics-filter/statistics-filter.module').then( m => m.StatisticsFilterPageModule)
   }
 ];
 
