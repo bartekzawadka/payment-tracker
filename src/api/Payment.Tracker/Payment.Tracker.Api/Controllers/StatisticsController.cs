@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Baz.Service.Action.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Payment.Tracker.BusinessLogic.Dto.Statistics;
 using Payment.Tracker.BusinessLogic.Services;
+using Payment.Tracker.BusinessLogic.Statistics;
 
 namespace Payment.Tracker.Api.Controllers
 {
@@ -18,10 +20,14 @@ namespace Payment.Tracker.Api.Controllers
             _statisticsService = statisticsService;
         }
 
-        [HttpGet("totalCostPerMonth")]
-        public Task<IServiceActionResult<StatisticsOutputDto<decimal>>> GetTotalCostPerMonthAsync(
+        [HttpGet("list")]
+        public IList<KeyValuePair<int, string>> GetStatistics() => StatisticsService.GetAvailableStatistics();
+
+        [HttpGet("{statisticsType}")]
+        public Task<IServiceActionResult<StatisticsOutputDto<decimal>>> GetStatisticsDataAsync(
+            StatisticsType statisticsType,
             [FromQuery] DateTime? notBefore,
             [FromQuery] DateTime? notAfter) =>
-            _statisticsService.GetTotalCostsPerMonthAsync(notBefore, notAfter);
+            _statisticsService.GetStatisticsDataAsync(statisticsType, notBefore, notAfter);
     }
 }

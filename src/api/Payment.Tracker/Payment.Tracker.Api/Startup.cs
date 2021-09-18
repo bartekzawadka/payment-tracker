@@ -15,6 +15,8 @@ using Payment.Tracker.Api.Extensions;
 using Payment.Tracker.BusinessLogic.Configuration;
 using Payment.Tracker.BusinessLogic.Seeds;
 using Payment.Tracker.BusinessLogic.Services;
+using Payment.Tracker.BusinessLogic.Statistics;
+using Payment.Tracker.BusinessLogic.Statistics.Providers;
 using Payment.Tracker.BusinessLogic.Validators.Template;
 using Payment.Tracker.DataLayer;
 using Payment.Tracker.DataLayer.Models;
@@ -75,6 +77,7 @@ namespace Payment.Tracker.Api
 
             RegisterRepositories(services);
             RegisterServices(services);
+            RegisterStatisticDataProviders(services);
             RegisterSeeds(services);
         }
 
@@ -112,6 +115,12 @@ namespace Payment.Tracker.Api
             services.AddScoped<ITemplateService, TemplateService>();
             services.AddScoped<IPaymentsService, PaymentsService>();
             services.AddScoped<IStatisticsService, StatisticsService>();
+        }
+
+        private static void RegisterStatisticDataProviders(IServiceCollection services)
+        {
+            services.AddScoped<IStatisticsTypeStrategy, StatisticsTypeStrategy>();
+            services.AddScoped<IStatisticsDataProvider, TotalCostsPerMonthDataProvider>();
         }
         
         private static void RegisterSeeds(IServiceCollection services)
