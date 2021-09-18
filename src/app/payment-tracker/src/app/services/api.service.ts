@@ -37,7 +37,7 @@ export abstract class ApiService{
     return this.http.delete(this.getEndpointUrl('/') + id);
   }
 
-  private getEndpointUrl(actionUrl: string): string {
+  protected getEndpointUrl(actionUrl: string): string {
     return environment.apiUrl + '/' + this.root + actionUrl;
   }
 }

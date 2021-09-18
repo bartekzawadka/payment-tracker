@@ -27,8 +27,13 @@ namespace Payment.Tracker.BusinessLogic.Statistics.Providers
             
             var keyValuePairs = await _paymentSetsRepository
                 .GetAllAsAsync(
-                    set => new KeyValuePair<string, decimal>(
-                        set.ForMonth.ToString("yyyy-MM"), set.PaymentPositions.Sum(position => position.Price)),
+                    set => new KeyValuePair<string, StatisticsDataPoint<decimal>>(
+                        set.ForMonth.ToString("yyyy-MM"),
+                        new StatisticsDataPoint<decimal>
+                        {
+                            X =set.ForMonth.ToString("yyyy-MM"),
+                            Y =set.PaymentPositions.Sum(position => position.Price) 
+                        }),
                     filter);
 
             var dataDictionary = keyValuePairs.ToDictionary(pair => pair.Key, pair => pair.Value);
