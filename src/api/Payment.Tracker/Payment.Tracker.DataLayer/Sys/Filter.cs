@@ -36,7 +36,7 @@ namespace Payment.Tracker.DataLayer.Sys
             }
         }
 
-        public virtual List<ColumnSort> Sorting { get; set; } = new List<ColumnSort>
+        public virtual List<ColumnSort> Sorting { get; set; } = new()
         {
             new ColumnSort
             {

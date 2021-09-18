@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Baz.Service.Action.Core;
+using MongoDB.Driver;
 using Payment.Tracker.BusinessLogic.Dto.Statistics;
 using Payment.Tracker.DataLayer.Models;
 using Payment.Tracker.DataLayer.Repositories;
@@ -19,13 +20,35 @@ namespace Payment.Tracker.BusinessLogic.Services
             _paymentSetsRepository = paymentSetsRepository;
         }
 
-        public async Task<IServiceActionResult<StatisticsOutputDto<decimal>>> GetTotalCostsPerMonthAsync()
+        public async Task<IServiceActionResult<StatisticsOutputDto<decimal>>> GetTotalCostsPerMonthAsync(
+            DateTime? notBefore,
+            DateTime? notAfter)
         {
+            var filterBuilder = FilterBuilder<PaymentSet>.Create();
+            if (notBefore != null && notBefore != default(DateTime))
+            {
+                filterBuilder.WithAndFilterExpression(set => set.ForMonth >= notBefore.Value);
+            }
+
+            if (notAfter != null && notAfter != default(DateTime))
+            {
+                filterBuilder.WithAndFilterExpression(set => set.ForMonth < notAfter.Value);
+            }
+
+            filterBuilder.WithSorting(new List<ColumnSort>
+            {
+                new()
+                {
+                    ColumnName = nameof(PaymentSet.ForMonth),
+                    IsDescending = false
+                }
+            });
+
             var keyValuePairs = await _paymentSetsRepository
                 .GetAllAsAsync(
                     set => new KeyValuePair<string, decimal>(
                         set.ForMonth.ToString("yyyy-MM"), set.PaymentPositions.Sum(position => position.Price)),
-                    new Filter<PaymentSet>(set => set.ForMonth <= DateTime.Now.AddMonths(-1)));
+                    filterBuilder.Build());
 
             var dataDictionary = keyValuePairs.ToDictionary(pair => pair.Key, pair => pair.Value);
 

@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Baz.Service.Action.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +19,9 @@ namespace Payment.Tracker.Api.Controllers
         }
 
         [HttpGet("totalCostPerMonth")]
-        public Task<IServiceActionResult<StatisticsOutputDto<decimal>>> GetTotalCostPerMonthAsync() =>
-            _statisticsService.GetTotalCostsPerMonthAsync();
+        public Task<IServiceActionResult<StatisticsOutputDto<decimal>>> GetTotalCostPerMonthAsync(
+            [FromQuery] DateTime? notBefore,
+            [FromQuery] DateTime? notAfter) =>
+            _statisticsService.GetTotalCostsPerMonthAsync(notBefore, notAfter);
     }
 }
