@@ -58,7 +58,7 @@ namespace Payment.Tracker.BusinessLogic.Services
         {
             var now = DateTime.Now;
             var startMonth = new DateTime(now.Year, now.Month, 1);
-            var endMonth = new DateTime(startMonth.Year, startMonth.Month + 1, 1);
+            var endMonth = startMonth.AddMonths(1);
             var filter = new Filter<PaymentSet>(x => x.ForMonth >= startMonth && x.ForMonth < endMonth); 
             if (!await _paymentSetsRepository.ExistsAsync(filter))
             {
@@ -75,7 +75,7 @@ namespace Payment.Tracker.BusinessLogic.Services
         public async Task<IServiceActionResult<PaymentSetDto>> CreatePaymentSetAsync(PaymentSetDto dto)
         {
             var startMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month, 1);
-            var endMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month + 1, 1);
+            var endMonth = startMonth.AddMonths(1);
             if (await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x =>
                 x.ForMonth >= startMonth && x.ForMonth < endMonth)))
             {
@@ -112,7 +112,8 @@ namespace Payment.Tracker.BusinessLogic.Services
                     $"Nie odnaleziono setu o ID {id}");
             }
 
-            var endMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month + 1, dto.ForMonth.Day);
+            dto.ForMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month, 1);
+            var endMonth = dto.ForMonth.AddMonths(1);
             if (await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x =>
                 x.Id != id
                 && x.ForMonth>= dto.ForMonth && x.ForMonth < endMonth)))
