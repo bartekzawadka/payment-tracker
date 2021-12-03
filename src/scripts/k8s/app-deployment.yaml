@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: payment-tracker-app
-          image: bartee/payment-tracker-app:2.2.0
+          image: bartee/payment-tracker-app:2.2.1
           ports:
             - containerPort: 8100
               name: http

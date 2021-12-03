@@ -14,6 +14,12 @@ export class PaymentService extends ApiService {
     super(http);
   }
 
+  private static fixDateInEntry(entry: PaymentSet): PaymentSet{
+    const tmp = new Date(entry.forMonth);
+    entry.forMonth = new Date(tmp.getFullYear(), tmp.getMonth(), tmp.getDate(), 0, 0, 0).toDateString();
+    return entry;
+  }
+
   getPaymentSetsList(): Observable<PaymentSetsListItem[]> {
     return this.get<PaymentSetsListItem[]>('/list');
   }
@@ -27,10 +33,12 @@ export class PaymentService extends ApiService {
   }
 
   createPaymentSet(data: PaymentSet): Observable<PaymentSet> {
+    data = PaymentService.fixDateInEntry(data);
     return this.post<PaymentSet, any>('/', data);
   }
 
   updatePaymentSet(data: PaymentSet): Observable<PaymentSet> {
+    data = PaymentService.fixDateInEntry(data);
     return this.put<PaymentSet>(`/${data.id}`, data);
   }
 }
