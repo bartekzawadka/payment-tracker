@@ -53,10 +53,10 @@ class Build : NukeBuild
     Target Restore => _ => _
         .Executes(() =>
         {
-            NpmTasks.NpmInstall(settings =>
-                settings
-                    .SetProcessLogOutput(true)
-                    .SetProcessWorkingDirectory(AppDirectory));
+            // NpmTasks.NpmInstall(settings =>
+            //     settings
+            //         .SetProcessLogOutput(true)
+            //         .SetProcessWorkingDirectory(AppDirectory));
             
             NuGetTasks.NuGetRestore(settings =>
                 settings
