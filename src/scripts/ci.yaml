@@ -55,6 +55,21 @@ jobs:
           failTaskOnFailedTests: true
           testRunTitle: 'Unit and integration Tests'
 
+      - task: DotNetCoreCLI@2
+        displayName: 'Pack synchronization component'
+        inputs:
+          command: 'pack'
+          packagesToPack: '**/Payment.Tracker.Synchronization.csproj'
+          arguments: '--configuration $(BuildConfiguration) --no-restore --no-build'
+      - task: NuGetAuthenticate@0
+        displayName: 'NuGet Authenticate'
+      - task: NuGetCommand@2
+        displayName: 'NuGet push'
+        inputs:
+          command: push
+          publishVstsFeed: 'Baz'
+          allowPackageConflicts: true
+
       - task: Docker@2
         displayName: Build API image
         inputs:

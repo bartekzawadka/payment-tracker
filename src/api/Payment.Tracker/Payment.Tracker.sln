@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Tracker.Utils.UnitT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Tracker.IntegrationTests", "Tests\Payment.Tracker.IntegrationTests\Payment.Tracker.IntegrationTests.csproj", "{E72A1467-368A-43CD-A4EA-823546E4CF2F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Tracker.Synchronization", "Payment.Tracker.Synchronization\Payment.Tracker.Synchronization.csproj", "{42F60B30-5E4E-4BF7-AE88-30B723E148A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{E72A1467-368A-43CD-A4EA-823546E4CF2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E72A1467-368A-43CD-A4EA-823546E4CF2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E72A1467-368A-43CD-A4EA-823546E4CF2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42F60B30-5E4E-4BF7-AE88-30B723E148A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42F60B30-5E4E-4BF7-AE88-30B723E148A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42F60B30-5E4E-4BF7-AE88-30B723E148A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42F60B30-5E4E-4BF7-AE88-30B723E148A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{94A6CDA9-392F-47B8-833F-2672EB765B98} = {1AB399C7-586D-4576-8E49-94343E14FF57}

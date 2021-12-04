@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <PackageId>Payment.Tracker.Synchronization</PackageId>
+        <Authors>Bartosz Zawadka</Authors>
+        <Description>Payment Tracker data exchange and synchronization models</Description>
+        <PackageVersion>1.0.0</PackageVersion>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
+        <FileVersion>1.0.0</FileVersion>
+        <IncludeSymbols>true</IncludeSymbols>
+    </PropertyGroup>
+    
+</Project>
