@@ -64,6 +64,8 @@ jobs:
           ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/bin
           echo "ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/bin/Release"
           ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/bin/Release
+          echo "Artifacts staging directory"
+          ls $(Build.ArtifactsStagingDirectory)
       - task: DotNetCoreCLI@2
         displayName: 'Pack synchronization component'
         inputs:
