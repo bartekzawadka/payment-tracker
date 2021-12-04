@@ -59,10 +59,9 @@ jobs:
         displayName: 'Pack synchronization component'
         inputs:
           command: 'pack'
-          packagesToPack: '**/Payment.Tracker.Synchronization.csproj'
+          packagesToPack: '**/*.Synchronization.csproj'
           arguments: '--configuration $(BuildConfiguration) --no-restore --no-build'
-      - task: NuGetAuthenticate@0
-        displayName: 'NuGet Authenticate'
+
       - task: NuGetCommand@2
         displayName: 'NuGet push'
         inputs:
