@@ -55,6 +55,11 @@ jobs:
           failTaskOnFailedTests: true
           testRunTitle: 'Unit and integration Tests'
 
+      - script: |
+          ls $(Build.SourcesDirectory)/src/api/Payment.Tracker
+          ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/
+          ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/bin
+          ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/Release
       - task: DotNetCoreCLI@2
         displayName: 'Pack synchronization component'
         inputs:
