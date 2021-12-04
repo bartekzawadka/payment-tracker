@@ -60,7 +60,7 @@ jobs:
         inputs:
           command: 'pack'
           verbosityPack: 'Diagnostic'
-          packagesToPack: '**/Payment.Tracker.Synchronization.csproj'
+          packagesToPack: '**/Payment.Tracker.Synchronization.csproj;!**/*Tests.csproj'
           arguments: '--configuration $(BuildConfiguration) --no-restore --no-build'
 
       - task: NuGetCommand@2
