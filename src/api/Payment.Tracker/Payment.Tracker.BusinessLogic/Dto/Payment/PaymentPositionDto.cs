@@ -1,7 +1,11 @@
+using System;
+
 namespace Payment.Tracker.BusinessLogic.Dto.Payment
 {
     public class PaymentPositionDto : IdentifiableDto
     {
+        public Guid SharedId { get; set; }
+        
         public string Name { get; set; }
 
         public bool InvoiceReceived { get; set; }

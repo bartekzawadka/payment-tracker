@@ -11,6 +11,7 @@ namespace Payment.Tracker.BusinessLogic.Mappers
             new()
             {
                 Id = model.Id,
+                SharedId = model.SharedId,
                 ForMonth = model.ForMonth,
                 InvoicesAttached = model.InvoicesAttached,
                 Positions = model.PaymentPositions.Select(PaymentPositionMapper.ToDto).ToList()

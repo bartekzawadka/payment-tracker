@@ -3,21 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Baz.Service.Action.Core;
+using MassTransit;
 using Payment.Tracker.BusinessLogic.Dto.Payment;
 using Payment.Tracker.BusinessLogic.Mappers;
 using Payment.Tracker.DataLayer.Models;
 using Payment.Tracker.DataLayer.Repositories;
 using Payment.Tracker.DataLayer.Sys;
+using Payment.Tracker.Synchronization.EventModels;
+using Payment.Tracker.Synchronization.Events;
 
 namespace Payment.Tracker.BusinessLogic.Services
 {
     public class PaymentsService : IPaymentsService
     {
         private readonly IGenericRepository<PaymentSet> _paymentSetsRepository;
-        
-        public PaymentsService(IGenericRepository<PaymentSet> paymentSetsRepository)
+        private readonly ISendEndpointProvider _sendEndpointProvider;
+
+        public PaymentsService(IGenericRepository<PaymentSet> paymentSetsRepository, ISendEndpointProvider sendEndpointProvider)
         {
             _paymentSetsRepository = paymentSetsRepository;
+            _sendEndpointProvider = sendEndpointProvider;
         }
 
         public Task<List<PaymentSetListItemDto>> GetPaymentSetsListAsync() =>
@@ -83,6 +88,8 @@ namespace Payment.Tracker.BusinessLogic.Services
                     ServiceActionResponseNames.InvalidDataOrOperation,
                     "Już istnieje set dla wybranego okresu");
             }
+            
+            ManageSharedIds(dto);
 
             List<PaymentPosition> positions = dto
                 .Positions
@@ -91,14 +98,26 @@ namespace Payment.Tracker.BusinessLogic.Services
 
             var set = new PaymentSet
             {
+                SharedId = dto.SharedId,
                 ForMonth = startMonth,
                 InvoicesAttached = dto.InvoicesAttached,
                 PaymentPositions = positions
             };
 
             await _paymentSetsRepository.InsertAsync(set);
-            
             var result = PaymentSetMapper.ToDto(set, positions);
+            
+            await SendEventAsync(new PaymentEntriesUpdatedEvent
+            {
+                PaymentEntries = positions.Select(position => new PaymentEntry
+                {
+                    Name = position.Name,
+                    Price = position.Price,
+                    ForMonth = dto.ForMonth,
+                    SharedId = position.SharedId,
+                    PaymentSetSharedId = set.SharedId
+                })
+            });
 
             return ServiceActionResult<PaymentSetDto>.Get(ServiceActionResponseNames.Created, result);
         }
@@ -123,6 +142,8 @@ namespace Payment.Tracker.BusinessLogic.Services
                     $"Już istnieje set dla daty {dto.ForMonth:yyyy-MM}");
             }
 
+            ManageSharedIds(dto);
+            
             var set = await _paymentSetsRepository.GetByIdAsync(id);
 
             set.ForMonth = dto.ForMonth;
@@ -135,13 +156,47 @@ namespace Payment.Tracker.BusinessLogic.Services
             await _paymentSetsRepository.UpdateAsync(id, set);
 
             var result = PaymentSetMapper.ToDto(set, set.PaymentPositions);
+            
+            // TODO: Send business event
+            await SendEventAsync(new PaymentEntriesUpdatedEvent
+            {
+                PaymentEntries = set.PaymentPositions.Select(position => new PaymentEntry
+                {
+                    Name = position.Name,
+                    Price = position.Price,
+                    ForMonth = dto.ForMonth,
+                    SharedId = position.SharedId,
+                    PaymentSetSharedId = set.SharedId
+                })
+            });
 
             return ServiceActionResult<PaymentSetDto>.GetSuccess(result);
         }
 
+        private static void ManageSharedIds(PaymentSetDto dto)
+        {
+            if (dto.SharedId == Guid.Empty)
+            {
+                dto.SharedId = Guid.NewGuid();
+            }
+
+            dto.Positions = dto.Positions.Select(positionDto =>
+                {
+                    if (positionDto.SharedId != Guid.Empty)
+                    {
+                        return positionDto;
+                    }
+
+                    positionDto.SharedId = Guid.NewGuid();
+                    return positionDto;
+                })
+                .ToList();
+        }
+
         public async Task<IServiceActionResult> DeleteAsync(string id)
         {
-            if (!await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x => x.Id == id)))
+            var set = await _paymentSetsRepository.GetByIdAsync(id);
+            if (set == null)
             {
                 return ServiceActionResult.Get(
                     ServiceActionResponseNames.ObjectNotFound,
@@ -149,7 +204,19 @@ namespace Payment.Tracker.BusinessLogic.Services
             }
 
             await _paymentSetsRepository.DeleteAsync(id);
+
+            await SendEventAsync(new PaymentSetDeletedEvent
+            {
+                PaymentSetSharedId = set.SharedId
+            });
+            
             return ServiceActionResult.Get(ServiceActionResponseNames.Success);
+        }
+
+        private async Task SendEventAsync(object @event)
+        {
+            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"queue:{Synchronization.Queues.PaymentEvents}"));
+            await endpoint.Send(@event);
         }
     }
 }

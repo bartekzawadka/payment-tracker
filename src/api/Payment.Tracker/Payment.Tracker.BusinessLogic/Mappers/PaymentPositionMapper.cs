@@ -8,6 +8,7 @@ namespace Payment.Tracker.BusinessLogic.Mappers
         public static PaymentPositionDto ToDto(PaymentPosition model) =>
             new()
             {
+                SharedId = model.SharedId,
                 Name = model.Name,
                 Paid = model.Paid,
                 Price = model.Price,
@@ -18,6 +19,7 @@ namespace Payment.Tracker.BusinessLogic.Mappers
         public static PaymentPosition ToModel(PaymentPositionDto dto) =>
             new()
             {
+                SharedId = dto.SharedId,
                 Name = dto.Name,
                 Paid = dto.Paid,
                 Price = dto.Price,

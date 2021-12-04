@@ -6,11 +6,13 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Payment.Tracker.DataLayer\Payment.Tracker.DataLayer.csproj" />
+      <ProjectReference Include="..\Payment.Tracker.Synchronization\Payment.Tracker.Synchronization.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Baz.Service.Action.Core" Version="2.0.1" />
       <PackageReference Include="FluentValidation" Version="10.1.0" />
+      <PackageReference Include="MassTransit" Version="7.2.4" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
     </ItemGroup>
 

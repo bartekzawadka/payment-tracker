@@ -1,8 +1,10 @@
 using System;
 using System.Text;
+using Baz.MassTransit.Extensions.RabbitMq.Extensions;
 using Baz.Service.Action.AspNetCore.Extensions;
 using Baz.Service.Action.Core;
 using FluentValidation.AspNetCore;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -59,6 +61,9 @@ namespace Payment.Tracker.Api
 
             services.AddSingleton<ISecuritySettings>(securitySettings);
             ConfigureAuth(services, securitySettings);
+
+            services.AddMassTransitWithRabbitMq(Configuration, _ => { });
+            services.AddMassTransitHostedService();
 
             var builder = new ServiceActionResponseMapBuilder();
             services.AddControllers(options => { options
