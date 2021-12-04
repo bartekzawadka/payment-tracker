@@ -69,10 +69,10 @@ jobs:
           echo "Artifacts staging directory"
           ls $(Build.ArtifactStagingDirectory)
       - task: UseDotNet@2
-        displayName: 'Uset .NET 5.0.403'
+        displayName: 'Uset .NET 5.0.103'
         inputs:
           packageType: 'sdk'
-          version: '5.0.403'
+          version: '5.0.103'
           includePreviewVersions: true          
       - task: DotNetCoreCLI@2
         displayName: 'Pack synchronization component'
