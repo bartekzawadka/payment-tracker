@@ -56,10 +56,14 @@ jobs:
           testRunTitle: 'Unit and integration Tests'
 
       - script: |
+          echo "ls $(Build.SourcesDirectory)/src/api/Payment.Tracker"
           ls $(Build.SourcesDirectory)/src/api/Payment.Tracker
+          echo "ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/"
           ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/
+          echo "ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/bin"
           ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/bin
-          ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/Release
+          echo "ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/bin/Release"
+          ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/bin/Release
       - task: DotNetCoreCLI@2
         displayName: 'Pack synchronization component'
         inputs:
