@@ -29,10 +29,10 @@ jobs:
             tokenSuffix: '}##'
 
       - task: UseDotNet@2
-        displayName: 'Uset .NET 5.0.100'
+        displayName: 'Uset .NET 5.0.x'
         inputs:
           packageType: 'sdk'
-          version: '5.0.100'
+          version: '5.0.x'
           includePreviewVersions: true
       - task: NuGetAuthenticate@0
         displayName: 'NuGet Authenticate'
@@ -68,6 +68,12 @@ jobs:
           ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/bin/Release
           echo "Artifacts staging directory"
           ls $(Build.ArtifactStagingDirectory)
+      - task: UseDotNet@2
+        displayName: 'Uset .NET 5.0.403'
+        inputs:
+          packageType: 'sdk'
+          version: '5.0.403'
+          includePreviewVersions: true          
       - task: DotNetCoreCLI@2
         displayName: 'Pack synchronization component'
         inputs:
