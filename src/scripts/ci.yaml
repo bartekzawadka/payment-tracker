@@ -29,6 +29,7 @@ jobs:
             tokenSuffix: '}##'
 
       - task: UseDotNet@2
+        displayName: 'Use .NET 5'
         inputs:
           packageType: 'sdk'
           version: '5.0.x'           
@@ -55,21 +56,18 @@ jobs:
           failTaskOnFailedTests: true
           testRunTitle: 'Unit and integration Tests'
 
-      - script: |
-          echo "ls $(Build.SourcesDirectory)/src/api/Payment.Tracker"
-          ls $(Build.SourcesDirectory)/src/api/Payment.Tracker
-          echo "ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/"
-          ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/
-          echo "ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/bin"
-          ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/bin
-          echo "ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/bin/Release"
-          ls $(Build.SourcesDirectory)/src/api/Payment.Tracker/Payment.Tracker.Synchronization/bin/Release
+      - task: UseDotNet@2
+        displayName: 'Uset .NET 5.0.103'
+        inputs:
+          packageType: 'sdk'
+          version: '5.0.103'
+
       - task: DotNetCoreCLI@2
         displayName: 'Pack synchronization component'
         inputs:
           command: 'pack'
           verbosityPack: 'Diagnostic'
-          packagesToPack: '**/Payment.Tracker.Synchronization.csproj;!**/*Tests.csproj'
+          packagesToPack: '**/Payment.Tracker.Synchronization.csproj'
           arguments: '--configuration $(BuildConfiguration) --no-restore --no-build'
 
       - task: NuGetCommand@2
