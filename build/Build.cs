@@ -94,7 +94,7 @@ class Build : NukeBuild
                     .SetProjectFile(Solution.GetProject("Payment.Tracker.Synchronization")?.Path)
                     .SetConfiguration(Configuration)
                     .SetNoRestore(true)
-                    .SetVerbosity(DotNetVerbosity.Minimal));                    
+                    .SetVerbosity(DotNetVerbosity.Minimal));
             
             var command = "run ng run app:build";
             if (Equals(Configuration, Configuration.Release))
