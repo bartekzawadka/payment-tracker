@@ -38,22 +38,22 @@ jobs:
       - script: './build.sh --target compile --configuration $(BuildConfiguration) --host AzurePipelines'
         displayName: 'Run NUKE build'
 
-      - script: './build.sh --target test --configuration $(BuildConfiguration) --host AzurePipelines'
-        displayName: 'Run NUKE unit tests'
+      # - script: './build.sh --target test --configuration $(BuildConfiguration) --host AzurePipelines'
+      #   displayName: 'Run NUKE unit tests'
 
-      - task: Bash@3
-        displayName: 'Run integration tests'
-        inputs:
-          targetType: filePath
-          filePath: ./src/api/Payment.Tracker/Tests/Docker/run.sh
+      # - task: Bash@3
+      #   displayName: 'Run integration tests'
+      #   inputs:
+      #     targetType: filePath
+      #     filePath: ./src/api/Payment.Tracker/Tests/Docker/run.sh
 
-      - task: PublishTestResults@2
-        displayName: 'Publish tests results'
-        inputs:
-          testResultsFormat: VSTest
-          testResultsFiles: '**/*.trx'
-          failTaskOnFailedTests: true
-          testRunTitle: 'Unit and integration Tests'
+      # - task: PublishTestResults@2
+      #   displayName: 'Publish tests results'
+      #   inputs:
+      #     testResultsFormat: VSTest
+      #     testResultsFiles: '**/*.trx'
+      #     failTaskOnFailedTests: true
+      #     testRunTitle: 'Unit and integration Tests'
 
       - script: |
           echo "ls $(Build.SourcesDirectory)/src/api/Payment.Tracker"

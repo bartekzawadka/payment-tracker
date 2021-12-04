@@ -68,26 +68,26 @@ class Build : NukeBuild
         .DependsOn(Restore)
         .Executes(() =>
         {
-            DotNetTasks.DotNetBuild(settings =>
-                settings
-                    .SetProjectFile(Solution.GetProject("Payment.Tracker.Api")?.Path)
-                    .SetConfiguration(Configuration)
-                    .SetNoRestore(true)
-                    .SetVerbosity(DotNetVerbosity.Minimal));
-
-            DotNetTasks.DotNetBuild(settings =>
-                settings
-                    .SetProjectFile(Solution.GetProject("Payment.Tracker.Notifier")?.Path)
-                    .SetConfiguration(Configuration)
-                    .SetNoRestore(true)
-                    .SetVerbosity(DotNetVerbosity.Minimal));
-            
-            DotNetTasks.DotNetBuild(settings =>
-                settings
-                    .SetProjectFile(Solution.GetProject("Payment.Tracker.IntegrationTests")?.Path)
-                    .SetConfiguration(Configuration)
-                    .SetNoRestore(true)
-                    .SetVerbosity(DotNetVerbosity.Minimal));
+            // DotNetTasks.DotNetBuild(settings =>
+            //     settings
+            //         .SetProjectFile(Solution.GetProject("Payment.Tracker.Api")?.Path)
+            //         .SetConfiguration(Configuration)
+            //         .SetNoRestore(true)
+            //         .SetVerbosity(DotNetVerbosity.Minimal));
+            //
+            // DotNetTasks.DotNetBuild(settings =>
+            //     settings
+            //         .SetProjectFile(Solution.GetProject("Payment.Tracker.Notifier")?.Path)
+            //         .SetConfiguration(Configuration)
+            //         .SetNoRestore(true)
+            //         .SetVerbosity(DotNetVerbosity.Minimal));
+            //
+            // DotNetTasks.DotNetBuild(settings =>
+            //     settings
+            //         .SetProjectFile(Solution.GetProject("Payment.Tracker.IntegrationTests")?.Path)
+            //         .SetConfiguration(Configuration)
+            //         .SetNoRestore(true)
+            //         .SetVerbosity(DotNetVerbosity.Minimal));
                     
             DotNetTasks.DotNetBuild(settings =>
                 settings
@@ -96,13 +96,13 @@ class Build : NukeBuild
                     .SetNoRestore(true)
                     .SetVerbosity(DotNetVerbosity.Minimal));
             
-            var command = "run ng run app:build";
-            if (Equals(Configuration, Configuration.Release))
-            {
-                command += ":production";
-            }
-            
-            NpmTasks.Npm(command, AppDirectory);
+            // var command = "run ng run app:build";
+            // if (Equals(Configuration, Configuration.Release))
+            // {
+            //     command += ":production";
+            // }
+            //
+            // NpmTasks.Npm(command, AppDirectory);
         });
 
     Target Test => _ => _
