@@ -106,18 +106,8 @@ namespace Payment.Tracker.BusinessLogic.Services
 
             await _paymentSetsRepository.InsertAsync(set);
             var result = PaymentSetMapper.ToDto(set, positions);
-            
-            await SendEventAsync(new PaymentEntriesUpdatedEvent
-            {
-                PaymentEntries = positions.Select(position => new PaymentEntry
-                {
-                    Name = position.Name,
-                    Price = position.Price,
-                    ForMonth = dto.ForMonth,
-                    SharedId = position.SharedId,
-                    PaymentSetSharedId = set.SharedId
-                })
-            });
+
+            await SendPaymentsUpdatedEventAsync(set.SharedId, dto.ForMonth, positions);
 
             return ServiceActionResult<PaymentSetDto>.Get(ServiceActionResponseNames.Created, result);
         }
@@ -156,19 +146,8 @@ namespace Payment.Tracker.BusinessLogic.Services
             await _paymentSetsRepository.UpdateAsync(id, set);
 
             var result = PaymentSetMapper.ToDto(set, set.PaymentPositions);
-            
-            // TODO: Send business event
-            await SendEventAsync(new PaymentEntriesUpdatedEvent
-            {
-                PaymentEntries = set.PaymentPositions.Select(position => new PaymentEntry
-                {
-                    Name = position.Name,
-                    Price = position.Price,
-                    ForMonth = dto.ForMonth,
-                    SharedId = position.SharedId,
-                    PaymentSetSharedId = set.SharedId
-                })
-            });
+
+            await SendPaymentsUpdatedEventAsync(set.SharedId, dto.ForMonth, set.PaymentPositions);
 
             return ServiceActionResult<PaymentSetDto>.GetSuccess(result);
         }
@@ -205,14 +184,31 @@ namespace Payment.Tracker.BusinessLogic.Services
 
             await _paymentSetsRepository.DeleteAsync(id);
 
-            await SendEventAsync(new PaymentSetDeletedEvent
-            {
-                PaymentSetSharedId = set.SharedId
-            });
+            await SendEventAsync(PaymentSetDeletedEvent.Create(set.SharedId));
             
             return ServiceActionResult.Get(ServiceActionResponseNames.Success);
         }
 
+        private Task SendPaymentsUpdatedEventAsync(
+            Guid setSharedId,
+            DateTime forMonth,
+            IEnumerable<PaymentPosition> paymentPositions)
+        {
+            var @event = new PaymentEntriesUpdatedEvent
+            {
+                PaymentEntries = paymentPositions.Select(position => new PaymentEntry
+                {
+                    Name = position.Name,
+                    Price = position.Price,
+                    ForMonth = forMonth,
+                    SharedId = position.SharedId,
+                    PaymentSetSharedId = setSharedId
+                })
+            };
+
+            return SendEventAsync(@event);
+        }
+        
         private async Task SendEventAsync(object @event)
         {
             var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"queue:{Synchronization.Queues.PaymentEvents}"));
