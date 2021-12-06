@@ -20,10 +20,12 @@ jobs:
           echo "##vso[task.setvariable variable=appVersion]$PACKAGE_VERSION"
         displayName: Get app version
       - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-        displayName: 'Replace tokens in **/environment.prod.ts'
+        displayName: 'Replace tokens in files'
         inputs:
             rootDirectory: src
-            targetFiles: '**/environment.prod.ts'
+            targetFiles: |
+              **/environment.prod.ts
+              **/appsettings.Production.json
             writeBOM: false
             tokenPrefix: '##{'
             tokenSuffix: '}##'
