@@ -3,6 +3,7 @@ using System.Text;
 using Baz.MassTransit.Extensions.RabbitMq.Extensions;
 using Baz.Service.Action.AspNetCore.Extensions;
 using Baz.Service.Action.Core;
+using Expense.Collector.Synchronization;
 using FluentValidation.AspNetCore;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using Payment.Tracker.Api.Extensions;
 using Payment.Tracker.BusinessLogic.Configuration;
+using Payment.Tracker.BusinessLogic.EventHandlers;
 using Payment.Tracker.BusinessLogic.Seeds;
 using Payment.Tracker.BusinessLogic.Services;
 using Payment.Tracker.BusinessLogic.Statistics;
@@ -62,9 +64,6 @@ namespace Payment.Tracker.Api
             services.AddSingleton<ISecuritySettings>(securitySettings);
             ConfigureAuth(services, securitySettings);
 
-            services.AddMassTransitWithRabbitMq(Configuration, _ => { });
-            services.AddMassTransitHostedService();
-
             var builder = new ServiceActionResponseMapBuilder();
             services.AddControllers(options => { options
                 .Filters
@@ -80,12 +79,25 @@ namespace Payment.Tracker.Api
             var context = new PaymentContext(connectionString);
             services.AddSingleton(context);
 
+            ConfigureMassTransit(services);
+            
             RegisterRepositories(services);
             RegisterServices(services);
             RegisterStatisticDataProviders(services);
             RegisterSeeds(services);
         }
 
+        private void ConfigureMassTransit(IServiceCollection services)
+        {
+            services.AddMassTransitWithRabbitMq(Configuration, configurator =>
+            {
+                configurator.WithConsumer<SharedExpenseUpdatedEventHandler>(Queues.ExpenseEvents);
+                configurator.WithConsumer<SharedExpenseDeletedEventHandler>(Queues.ExpenseEvents);
+            });
+
+            services.AddMassTransitHostedService();
+        }
+        
         private static void ApplyEnvironmentVariables(ISecuritySettings securitySettings)
         {
             var tokenSecretVar = Environment.GetEnvironmentVariable("TOKEN_SECRET");

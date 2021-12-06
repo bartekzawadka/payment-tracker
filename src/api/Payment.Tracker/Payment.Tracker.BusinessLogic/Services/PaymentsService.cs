@@ -98,7 +98,7 @@ namespace Payment.Tracker.BusinessLogic.Services
 
             var set = new PaymentSet
             {
-                SharedId = dto.SharedId,
+                SharedId = dto.SharedId ?? Guid.NewGuid(),
                 ForMonth = startMonth,
                 InvoicesAttached = dto.InvoicesAttached,
                 PaymentPositions = positions
@@ -107,7 +107,7 @@ namespace Payment.Tracker.BusinessLogic.Services
             await _paymentSetsRepository.InsertAsync(set);
             var result = PaymentSetMapper.ToDto(set, positions);
 
-            await SendPaymentsUpdatedEventAsync(set.SharedId, dto.ForMonth, positions);
+            await SendPaymentsUpdatedEventAsync(set.SharedId, set.ForMonth, positions);
 
             return ServiceActionResult<PaymentSetDto>.Get(ServiceActionResponseNames.Created, result);
         }

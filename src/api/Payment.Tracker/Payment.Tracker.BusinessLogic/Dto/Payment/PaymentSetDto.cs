@@ -5,7 +5,7 @@ namespace Payment.Tracker.BusinessLogic.Dto.Payment
 {
     public class PaymentSetDto : IdentifiableDto
     {
-        public Guid SharedId { get; set; }
+        public Guid? SharedId { get; set; }
         
         public DateTime ForMonth { get; set; }
 

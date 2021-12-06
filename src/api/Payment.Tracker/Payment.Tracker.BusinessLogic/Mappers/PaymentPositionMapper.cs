@@ -1,3 +1,4 @@
+using System;
 using Payment.Tracker.BusinessLogic.Dto.Payment;
 using Payment.Tracker.DataLayer.Models;
 
@@ -19,7 +20,7 @@ namespace Payment.Tracker.BusinessLogic.Mappers
         public static PaymentPosition ToModel(PaymentPositionDto dto) =>
             new()
             {
-                SharedId = dto.SharedId,
+                SharedId = dto.SharedId ?? Guid.NewGuid(),
                 Name = dto.Name,
                 Paid = dto.Paid,
                 Price = dto.Price,

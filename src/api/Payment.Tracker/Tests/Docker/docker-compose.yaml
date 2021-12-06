@@ -4,7 +4,16 @@ networks:
     paymenttracker-integration:
         name: paymenttracker-integration
 
-services: 
+services:
+    paymenttracker-rabbitmq:
+        networks:
+            - paymenttracker-integration
+        image: rabbitmq:3.9.11
+        restart: always
+        container_name: paymenttracker-rabbitmq
+        ports:
+        - 5671:5671
+        - 5672:5672
     payment-tracker-integration-db:
         networks: 
             - paymenttracker-integration
@@ -21,5 +30,6 @@ services:
             dockerfile: Tests/Docker/Dockerfile
         depends_on:
             - payment-tracker-integration-db
+            - paymenttracker-rabbitmq
         networks: 
             - paymenttracker-integration

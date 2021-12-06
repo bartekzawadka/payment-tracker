@@ -5,4 +5,5 @@ export default class PaymentPosition {
   hasInvoice = false;
   price = 0.0;
   paid = false;
+  sharedId = '';
 }

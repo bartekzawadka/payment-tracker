@@ -46,5 +46,29 @@ spec:
                 secretKeyRef:
                   name: payment-tracker-api-secret
                   key: appHost
-
+            - name: RABBIT_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: expense-collector-api-secret
+                  key: rabbitHost
+            - name: RABBIT_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: expense-collector-api-secret
+                  key: rabbitPort
+            - name: RABBIT_VIRTUALHOST
+              valueFrom:
+                secretKeyRef:
+                  name: expense-collector-api-secret
+                  key: rabbitVirtualHost
+            - name: RABBIT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: expense-collector-api-secret
+                  key: rabbitUser
+            - name: RABBIT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: expense-collector-api-secret
+                  key: rabbitPassword     
     
