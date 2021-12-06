@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: payment-tracker-api
-          image: bartee/payment-tracker-api:3.0.2
+          image: bartee/payment-tracker-api:3.0.3
           ports:
             - containerPort: 5000
               name: http
@@ -46,29 +46,5 @@ spec:
                 secretKeyRef:
                   name: payment-tracker-api-secret
                   key: appHost
-            - name: RABBIT_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: payment-tracker-api-secret
-                  key: rabbitHost
-            - name: RABBIT_PORT
-              valueFrom:
-                secretKeyRef:
-                  name: payment-tracker-api-secret
-                  key: rabbitPort
-            - name: RABBIT_VIRTUALHOST
-              valueFrom:
-                secretKeyRef:
-                  name: payment-tracker-api-secret
-                  key: rabbitVirtualHost
-            - name: RABBIT_USER
-              valueFrom:
-                secretKeyRef:
-                  name: payment-tracker-api-secret
-                  key: rabbitUser
-            - name: RABBIT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: payment-tracker-api-secret
-                  key: rabbitPassword     
+    
     

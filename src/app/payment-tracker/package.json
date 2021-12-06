@@ -1,6 +1,6 @@
 {
   "name": "payment-tracker",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "author": "Bartek Zawadka",
   "homepage": "https://github.com/bartekzawadka/payment-tracker",
   "scripts": {
