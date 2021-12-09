@@ -8,7 +8,7 @@ namespace Payment.Tracker.DataLayer.Models
     {
         public Guid SharedId { get; set; }
         
-        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         public  DateTime ForMonth { get; set; }
 
         public bool InvoicesAttached { get; set; }
