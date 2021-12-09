@@ -99,7 +99,7 @@ namespace Payment.Tracker.BusinessLogic.Services
             var set = new PaymentSet
             {
                 SharedId = dto.SharedId ?? Guid.NewGuid(),
-                ForMonth = startMonth,
+                ForMonth = startMonth.ToUniversalTime(),
                 InvoicesAttached = dto.InvoicesAttached,
                 PaymentPositions = positions
             };
@@ -121,7 +121,7 @@ namespace Payment.Tracker.BusinessLogic.Services
                     $"Nie odnaleziono setu o ID {id}");
             }
 
-            dto.ForMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month, 1);
+            dto.ForMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month, 1).ToUniversalTime();
             var endMonth = dto.ForMonth.AddMonths(1);
             if (await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x =>
                 x.Id != id

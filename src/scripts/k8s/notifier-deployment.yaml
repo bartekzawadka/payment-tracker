@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: payment-tracker-notifier
-          image: bartee/payment-tracker-notifier:3.0.6
+          image: bartee/payment-tracker-notifier:3.0.7
           ports:
             - containerPort: 6000
               name: http
