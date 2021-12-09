@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: payment-tracker-api
-          image: bartee/payment-tracker-api:3.0.5
+          image: bartee/payment-tracker-api:3.0.6
           ports:
             - containerPort: 5000
               name: http
