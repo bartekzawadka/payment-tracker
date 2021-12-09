@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Baz.Service.Action.Core;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 using Payment.Tracker.BusinessLogic.Dto.Payment;
 using Payment.Tracker.BusinessLogic.Mappers;
 using Payment.Tracker.DataLayer.Models;
@@ -18,11 +19,16 @@ namespace Payment.Tracker.BusinessLogic.Services
     {
         private readonly IGenericRepository<PaymentSet> _paymentSetsRepository;
         private readonly ISendEndpointProvider _sendEndpointProvider;
+        private readonly ILogger<PaymentsService> _logger;
 
-        public PaymentsService(IGenericRepository<PaymentSet> paymentSetsRepository, ISendEndpointProvider sendEndpointProvider)
+        public PaymentsService(
+            IGenericRepository<PaymentSet> paymentSetsRepository,
+            ISendEndpointProvider sendEndpointProvider,
+            ILogger<PaymentsService> logger)
         {
             _paymentSetsRepository = paymentSetsRepository;
             _sendEndpointProvider = sendEndpointProvider;
+            _logger = logger;
         }
 
         public Task<List<PaymentSetListItemDto>> GetPaymentSetsListAsync() =>
@@ -209,6 +215,9 @@ namespace Payment.Tracker.BusinessLogic.Services
                     PaymentSetSharedId = setSharedId
                 })
             };
+
+            var dates = @event.PaymentEntries.Select(entry => entry.ForMonth).Distinct().ToList();
+            dates.ForEach(time => _logger.LogWarning($"Saving entry with time: {time.ToString("O")}"));
 
             return SendEventAsync(@event);
         }
