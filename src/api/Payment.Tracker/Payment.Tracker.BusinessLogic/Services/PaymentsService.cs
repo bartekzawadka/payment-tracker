@@ -142,6 +142,10 @@ namespace Payment.Tracker.BusinessLogic.Services
                 .Positions
                 .Select(PaymentPositionMapper.ToModel)
                 .ToList();
+            if (set.SharedId == default)
+            {
+                set.SharedId = dto.SharedId ?? Guid.NewGuid();
+            }
 
             await _paymentSetsRepository.UpdateAsync(id, set);
 
@@ -200,7 +204,7 @@ namespace Payment.Tracker.BusinessLogic.Services
                 {
                     Name = position.Name,
                     Price = position.Price,
-                    ForMonth = forMonth,
+                    ForMonth = forMonth.ToUniversalTime(),
                     SharedId = position.SharedId,
                     PaymentSetSharedId = setSharedId
                 })
