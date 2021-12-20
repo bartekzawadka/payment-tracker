@@ -85,10 +85,9 @@ namespace Payment.Tracker.BusinessLogic.Services
 
         public async Task<IServiceActionResult<PaymentSetDto>> CreatePaymentSetAsync(PaymentSetDto dto)
         {
-            var startMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month, 1);
-            var endMonth = startMonth.AddMonths(1);
+            var endMonth = dto.ForMonth.AddMonths(1);
             if (await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x =>
-                x.ForMonth >= startMonth && x.ForMonth < endMonth)))
+                x.ForMonth >= dto.ForMonth && x.ForMonth < endMonth)))
             {
                 return ServiceActionResult<PaymentSetDto>.Get(
                     ServiceActionResponseNames.InvalidDataOrOperation,
@@ -105,7 +104,7 @@ namespace Payment.Tracker.BusinessLogic.Services
             var set = new PaymentSet
             {
                 SharedId = dto.SharedId ?? Guid.NewGuid(),
-                ForMonth = startMonth.ToUniversalTime(),
+                ForMonth = dto.ForMonth,
                 InvoicesAttached = dto.InvoicesAttached,
                 PaymentPositions = positions
             };
@@ -127,7 +126,6 @@ namespace Payment.Tracker.BusinessLogic.Services
                     $"Nie odnaleziono setu o ID {id}");
             }
 
-            dto.ForMonth = new DateTime(dto.ForMonth.Year, dto.ForMonth.Month, 1).ToUniversalTime();
             var endMonth = dto.ForMonth.AddMonths(1);
             if (await _paymentSetsRepository.ExistsAsync(new Filter<PaymentSet>(x =>
                 x.Id != id

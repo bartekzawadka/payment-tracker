@@ -16,7 +16,7 @@ export class PaymentService extends ApiService {
 
   private static fixDateInEntry(entry: PaymentSet): PaymentSet{
     const tmp = new Date(entry.forMonth);
-    entry.forMonth = new Date(tmp.getFullYear(), tmp.getMonth(), tmp.getDate(), 0, 0, 0).toDateString();
+    entry.forMonth = new Date(tmp.getFullYear(), tmp.getMonth(), tmp.getDate(), 0, 0, 0).toISOString();
     return entry;
   }
 
