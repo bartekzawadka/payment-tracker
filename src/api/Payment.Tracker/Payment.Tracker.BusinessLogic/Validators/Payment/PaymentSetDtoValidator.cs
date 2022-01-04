@@ -1,3 +1,4 @@
+using System;
 using FluentValidation;
 using Payment.Tracker.BusinessLogic.Dto.Payment;
 
@@ -7,7 +8,7 @@ namespace Payment.Tracker.BusinessLogic.Validators.Payment
     {
         public PaymentSetDtoValidator()
         {
-            RuleFor(dto => dto.ForMonth).Must((dto, time, arg3) => time.Year > 1 && time.Month > 1)
+            RuleFor(dto => dto.ForMonth).Must((_, time, _) => time.Ticks > default(DateTime).Ticks)
                 .WithMessage("Miesiąc i rok w dacie zestawu płatności są wymagane");
             RuleFor(dto => dto.Positions).NotEmpty();
         }
